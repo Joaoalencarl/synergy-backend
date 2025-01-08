@@ -3,6 +3,45 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id                 String              @id @default(cuid())
+  //informações pessoais
+  nome               String
+  email              String              @unique
+  senha              String
+  cpf                String              @unique
+  data_de_nascimento DateTime
+  telefone           String
+  foto_url           String?
+  descricao          String?
+  //informações de endereço
+  logradouro         String
+  numero             String
+  complemento        String?
+  bairro             String
+  cidade             String
+  estado             String
+  cep                String
+  localizacao        String
+  //informações de verificação
+  verificado         StatusDeVerificacao
+  tipo               TipoDeUsuario
+  //informações de relacionamento
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+enum TipoDeUsuario {
+  PESSOA_FISICA
+  PESSOA_JURIDICA
+}
+
+enum StatusDeVerificacao {
+  PENDENTE
+  APROVADO
+  REPROVADO
 }
