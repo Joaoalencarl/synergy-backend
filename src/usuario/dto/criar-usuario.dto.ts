@@ -9,7 +9,7 @@ import {
   IsPhoneNumber,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { IsCPF } from 'src/decorators/is-cpf';
+import { IsCPF } from 'src/decorator/cpf.decorator';
 
 export class CriarUsuarioDto {
   @IsString({ message: 'O nome informado é inválido' })

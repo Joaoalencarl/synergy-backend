@@ -1,4 +1,5 @@
-// src/decorators/is-cpf.ts
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   registerDecorator,
   ValidationOptions,
@@ -6,7 +7,7 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator';
-import { isValidCPF } from '../utils/cpf-validator';
+import { isValidCPF } from './util/cpf-validator.util';
 
 @ValidatorConstraint({ async: false })
 export class IsCPFConstraint implements ValidatorConstraintInterface {
