@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -13,11 +13,20 @@ export class UserMiddleware {
 
     if (user) {
       if (user.email === data.email) {
-        throw new HttpException('E-mail já cadastrado', 400);
+        throw new UnauthorizedException('E-mail já cadastrado');
       }
       if (user.cpf === data.cpf) {
-        throw new HttpException('CPF já cadastrado', 400);
+        throw new UnauthorizedException('CPF já cadastrado');
       }
+    }
+  }
+  async userExists(id: string) {
+    const user = await this.prisma.usuario.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Usuário não encontrado');
     }
   }
 }

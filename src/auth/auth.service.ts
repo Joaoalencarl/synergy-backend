@@ -7,15 +7,18 @@ import { UserService } from 'src/usuario/usuario.service';
 import { UserPayload } from './models/UserPayload';
 import { UserToken } from './models/UserToken';
 import { StatusDeVerificacao } from '@prisma/client';
+import { Admin } from 'src/admin/entities/admin.entity';
+import { AdminService } from 'src/admin/admin.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly adminService: AdminService,
   ) {}
 
-  async login(user: Usuario): Promise<UserToken> {
+  async login(user: Usuario | Admin): Promise<UserToken> {
     const payload: UserPayload = {
       sub: user.id,
       email: user.email,
@@ -27,9 +30,11 @@ export class AuthService {
     };
   }
 
-  async validateUser(email: string, password: string): Promise<Usuario> {
-    const user = await this.userService.findByEmail(email);
-
+  async validateUser(email: string, password: string): Promise<any> {
+    const user =
+      (await this.userService.findByEmail(email)) ||
+      (await this.adminService.findByEmail(email));
+    console.log(user);
     if (!user) {
       throw new UnauthorizedException('Conta não existe.');
     }
@@ -46,7 +51,7 @@ export class AuthService {
 
     if (user) {
       const isPasswordValid = await bcrypt.compare(password, user.senha);
-
+      console.log(isPasswordValid);
       if (isPasswordValid) {
         return {
           ...user,
