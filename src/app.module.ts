@@ -5,10 +5,11 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './usuario/usuario.module';
 import { EmailService } from './email/email.service';
+import { AdminModule } from './admin/admin.module';
 import 'dotenv/config';
 
 @Module({
-  imports: [PrismaModule, UserModule, AuthModule],
+  imports: [PrismaModule, UserModule, AuthModule, AdminModule],
   controllers: [],
   providers: [
     {

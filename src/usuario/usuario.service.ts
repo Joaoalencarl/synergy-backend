@@ -7,6 +7,7 @@ import { Usuario } from './entities/usuario.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { EmailService } from 'src/email/email.service';
 import { UserMiddleware } from './middleware/user.middleware';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -16,7 +17,7 @@ export class UserService {
     private readonly userMiddleware: UserMiddleware,
   ) {}
 
-  async create(criarUsuarioDto: CriarUsuarioDto): Promise<Usuario> {
+  async createUser(criarUsuarioDto: CriarUsuarioDto): Promise<Usuario> {
     const tokenDeVerificacao = uuidv4();
     const data: Prisma.UsuarioCreateInput = {
       ...criarUsuarioDto,
@@ -40,11 +41,36 @@ export class UserService {
     };
   }
 
+  async updateUser(updateUserDto: UpdateUserDto, id: string): Promise<any> {
+    await this.userMiddleware.userExists(id);
+
+    const data: Prisma.UsuarioUpdateInput = {
+      ...updateUserDto,
+    };
+
+    const updatedUser = await this.prisma.usuario.update({
+      where: { id: id },
+      data,
+    });
+
+    return {
+      message: 'Usuário atualizado com sucesso',
+      updatedUser,
+    };
+  }
+
+  async deleteUser(id: string) {
+    await this.userMiddleware.userExists(id);
+    await this.prisma.usuario.delete({ where: { id } });
+
+    return { message: 'Usuário deletado com sucesso' };
+  }
+
   findByEmail(email: string) {
     return this.prisma.usuario.findUnique({ where: { email } });
   }
 
-  async confirmarEmail(token: string): Promise<void> {
+  async confirmarEmail(token: string) {
     const user = await this.prisma.usuario.findFirst({
       where: { token_verificacao: token },
     });

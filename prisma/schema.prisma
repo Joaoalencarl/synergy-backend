@@ -37,20 +37,26 @@ model Usuario {
 }
 
 model Admin {
-  id         String       @id @default(cuid())
-  nome       String
-  email      String       @unique
-  senha      String
-  adminType  AdminType
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  Permissoes Permissoes[]
+  id                String              @id @default(cuid())
+  //informações pessoais
+  nome              String
+  email             String              @unique
+  senha             String
+  adminType         AdminType
+  //informações de relacionamento
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  //informações de verificação
+  verificado        StatusDeVerificacao
+  token_verificacao String?
+  //informações de permissões
+  Permissoes        Permissoes[]
 }
 
 model Permissoes {
   id                      String  @id @default(cuid())
-  admin                   Admin   @relation(fields: [adminId], references: [id])
-  adminId                 String  
+  admin                   Admin   @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  adminId                 String
   criacao_de_usuario      Boolean
   distribuicao_de_tarefas Boolean
   requisicoes             Boolean

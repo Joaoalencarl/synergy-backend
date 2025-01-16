@@ -22,4 +22,13 @@ export class AuthController {
   async login(@Request() req: AuthRequest) {
     return this.authService.login(req.user);
   }
+  /* --> O login é feito com o email e a senha do usuário ou do admin.
+
+  curl --location 'http://{{host}}/login' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+      "email": "",
+      "password": ""
+  }'
+  */
 }
