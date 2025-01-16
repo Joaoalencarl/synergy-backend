@@ -80,4 +80,10 @@ export class AdminController {
     await this.adminService.confirmarEmail(token);
     return { message: 'E-mail confirmado com sucesso' };
   }
+
+  /* --> Para confirmar o e-mail do administrador, basta passar o token recebido no e-mail.
+  
+      curl --location --request GET 'http://{{host}}/admin/confirmar-email?token={{Token}}' \
+      --data ''
+    */
 }

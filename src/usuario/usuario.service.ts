@@ -59,18 +59,18 @@ export class UserService {
     };
   }
 
-  async deleteUser(id: string): Promise<void> {
+  async deleteUser(id: string) {
     await this.userMiddleware.userExists(id);
     await this.prisma.usuario.delete({ where: { id } });
 
-    new HttpException('Usuário deletado com sucesso', 200);
+    return { message: 'Usuário deletado com sucesso' };
   }
 
   findByEmail(email: string) {
     return this.prisma.usuario.findUnique({ where: { email } });
   }
 
-  async confirmarEmail(token: string): Promise<void> {
+  async confirmarEmail(token: string) {
     const user = await this.prisma.usuario.findFirst({
       where: { token_verificacao: token },
     });

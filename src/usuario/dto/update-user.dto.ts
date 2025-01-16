@@ -13,6 +13,7 @@ import { IsCPF } from 'src/decorator/cpf.decorator';
 
 export class UpdateUserDto {
   @IsString({ message: 'O nome informado é inválido' })
+  @IsOptional()
   nome?: string;
 
   @IsEmail(
@@ -23,6 +24,7 @@ export class UpdateUserDto {
     },
     { message: 'O email informado é inválido' },
   )
+  @IsOptional()
   email?: string;
 
   @IsStrongPassword(
@@ -35,19 +37,23 @@ export class UpdateUserDto {
     },
     { message: 'A senha informada é fraca' },
   )
+  @IsOptional()
   senha?: string;
 
   @IsCPF({ message: 'O CPF informado é inválido' })
+  @IsOptional()
   cpf?: string;
 
   @IsDate({ message: 'A data de nascimento informada é inválida' })
   @Type(() => Date)
+  @IsOptional()
   data_de_nascimento?: Date;
 
   @IsPhoneNumber('BR', { message: 'O telefone informado é inválido' })
+  @IsOptional()
   telefone?: string;
 
-  @IsOptional({ message: 'A foto informada é inválida' })
+  @IsOptional()
   @IsString()
   foto_url?: string;
 
@@ -60,29 +66,38 @@ export class UpdateUserDto {
   verificado?: StatusDeVerificacao = StatusDeVerificacao.PENDENTE;
 
   @IsString({ message: 'O tipo de usuário informado é inválido' })
+  @IsOptional()
   tipo?: TipoDeUsuario;
 
   @IsString({ message: 'O nome da rua informado é inválido' })
+  @IsOptional()
   logradouro?: string;
 
   @IsString({ message: 'O número informado é inválido' })
+  @IsOptional()
   numero?: string;
 
   @IsString({ message: 'O complemento informado é inválido' })
+  @IsOptional()
   complemento?: string;
 
   @IsString({ message: 'O bairro informado é inválido' })
+  @IsOptional()
   bairro?: string;
 
   @IsString({ message: 'A cidade informada é inválida' })
+  @IsOptional()
   cidade?: string;
 
   @IsString({ message: 'O estado informado é inválido' })
+  @IsOptional()
   estado?: string;
 
   @IsString({ message: 'O CEP informado é inválido' })
+  @IsOptional()
   cep?: string;
 
   @IsString({ message: 'A localização informada é inválida' })
+  @IsOptional()
   localizacao?: string; // GeoJSON Point (stringified)
 }
