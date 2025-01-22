@@ -9,6 +9,7 @@ datasource db {
 
 model Usuario {
   id                 String              @id @default(cuid())
+  ambulante          Ambulante[]
   //informações pessoais
   nome               String
   email              String              @unique
@@ -64,6 +65,25 @@ model Permissoes {
   infracoes               Boolean
   eventos                 Boolean
   relatorios_estrategicos Boolean
+}
+
+// --> antiga tabela de requisições
+model Ambulante { 
+  id                      String              @id @default(cuid())
+  usuario                 Usuario?            @relation(fields: [usuario_id], references: [id])
+  usuario_id              String?
+  //informações pessoais
+  descricao               String
+  status                  StatusDeVerificacao
+  nome_do_negoocio        String
+  tipo_do_negocio         String
+  descricao_do_negocio    String
+  localizacao_do__negocio String
+  fotos_do_negocio        String[]
+  documentacao            String[]
+  //informações de relacionamento
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
 }
 
 enum TipoDeUsuario {
