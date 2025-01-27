@@ -27,41 +27,22 @@ export class AmbulanteService {
 
     return {
       message: 'Ambulante criado com sucesso, aguarde a verificação',
-      ambulante,
+      ...ambulante,
     };
   }
 
-  async findAll(usuario_id: string) {
-    await this.userMiddleware.userExists(usuario_id);
-    const data = this.prisma.ambulante.findMany({ where: { usuario_id } });
-
-    if (!data) return 'Nenhum ambulante encontrado';
-    else {
-      return {
-        message: 'Ambulantes encontrados',
-        data,
-      };
-    }
-  }
-
-  async findOne(id: string, usuario_id: string) {
-    await this.userMiddleware.userExists(usuario_id);
+  async buscarAmbulante(id: string) {
     const data = this.prisma.ambulante.findUnique({ where: { id } });
     if (!data) return 'Nenhum ambulante encontrado';
     else {
       return {
         message: 'Ambulante encontrado',
-        data,
+        ...data,
       };
     }
   }
 
-  async update(
-    id: string,
-    usuario_id: string,
-    updateAmbulanteDto: UpdateAmbulanteDto,
-  ) {
-    await this.userMiddleware.userExists(usuario_id);
+  async update(id: string, updateAmbulanteDto: UpdateAmbulanteDto) {
     const data: Prisma.AmbulanteUpdateInput = {
       ...updateAmbulanteDto,
     };
