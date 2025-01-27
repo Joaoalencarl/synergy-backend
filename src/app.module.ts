@@ -6,10 +6,11 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './usuario/usuario.module';
 import { EmailService } from './email/email.service';
 import { AdminModule } from './admin/admin.module';
+import { AmbulanteModule } from './ambulante/ambulante.module';
 import 'dotenv/config';
 
 @Module({
-  imports: [PrismaModule, UserModule, AuthModule, AdminModule],
+  imports: [PrismaModule, UserModule, AuthModule, AdminModule, AmbulanteModule],
   controllers: [],
   providers: [
     {

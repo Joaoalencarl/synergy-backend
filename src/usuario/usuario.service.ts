@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
@@ -56,6 +56,35 @@ export class UserService {
     return {
       message: 'Usuário atualizado com sucesso',
       updatedUser,
+    };
+  }
+
+  async getUser(search: string) {
+    const users = await this.prisma.usuario.findMany({
+      where: {
+        OR: [
+          { id: { contains: search } },
+          { nome: { contains: search } },
+          { email: { contains: search } },
+          { cpf: { contains: search } },
+        ],
+      },
+    });
+
+    if (users.length === 0) {
+      throw new NotFoundException(
+        `Nenhum usuário encontrado com o termo de busca: ${search}`,
+      );
+    }
+
+    return {
+      message: 'pesquisa realizada com sucesso',
+      users: users.map((user) => {
+        return {
+          ...user,
+          senha: undefined,
+        };
+      }),
     };
   }
 

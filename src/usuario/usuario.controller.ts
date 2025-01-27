@@ -61,6 +61,15 @@ export class UserController {
     }'
   */
 
+  @Get()
+  async getUser(@Query('search') search: string) {
+    return this.userService.getUser(search);
+  }
+  /* --> Para buscar um ou mais usuários, basta passar o nome, email ou cpf.
+    curl --location 'http://{{host}}/user?search={{nome, email, cpf ou id}}' \
+  --header 'Authorization: Bearer {{BearerToken}}' \
+ */
+
   @Delete()
   async deleteUser(@Query('id') id: string) {
     return this.userService.deleteUser(id);
