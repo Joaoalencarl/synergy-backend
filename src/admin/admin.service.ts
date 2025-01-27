@@ -3,7 +3,7 @@ import { EmailService } from 'src/email/email.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { Prisma } from '@prisma/client';
+import { Prisma, StatusDeVerificacao } from '@prisma/client';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -88,5 +88,39 @@ export class AdminService {
 
   async findByEmail(email: string) {
     return this.prisma.admin.findFirst({ where: { email } });
+  }
+
+  async requisicaoDeAmbulante(
+    ambulante_id: string,
+    admin_id: string,
+    alterarStatus: StatusDeVerificacao,
+  ) {
+    if (
+      (await this.prisma.admin.findUnique({ where: { id: admin_id } })) === null
+    ) {
+      throw new Error('Admin não encontrado');
+    } else if (
+      (await this.prisma.ambulante.findUnique({
+        where: { id: ambulante_id },
+      })) === null
+    ) {
+      throw new Error('Ambulante não encontrado');
+    } else if (
+      alterarStatus !== 'APROVADO' &&
+      alterarStatus !== 'REPROVADO' &&
+      alterarStatus !== 'PENDENTE'
+    ) {
+      throw new Error('Status inválido');
+    }
+
+    const data = this.prisma.ambulante.update({
+      where: { id: ambulante_id },
+      data: { status: alterarStatus },
+    });
+
+    return {
+      message: 'Status do ambulante alterado com sucesso',
+      ...data,
+    };
   }
 }
