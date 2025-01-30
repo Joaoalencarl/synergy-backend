@@ -7,10 +7,11 @@ import { UserModule } from './usuario/usuario.module';
 import { EmailService } from './email/email.service';
 import { AdminModule } from './admin/admin.module';
 import { AmbulanteModule } from './ambulante/ambulante.module';
+import { EventoModule } from './evento/evento.module';
 import 'dotenv/config';
 
 @Module({
-  imports: [PrismaModule, UserModule, AuthModule, AdminModule, AmbulanteModule],
+  imports: [PrismaModule, UserModule, AuthModule, AdminModule, AmbulanteModule, EventoModule],
   controllers: [],
   providers: [
     {

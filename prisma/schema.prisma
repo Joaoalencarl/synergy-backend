@@ -8,54 +8,57 @@ datasource db {
 }
 
 model Usuario {
-  id                 String              @id @default(cuid())
-  ambulante          Ambulante[]
+  id                  String                @id @unique
+  ambulante           Ambulante[]
   //informações pessoais
-  nome               String
-  email              String              @unique
-  senha              String
-  cpf                String              @unique
-  data_de_nascimento DateTime
-  telefone           String
-  foto_url           String?
-  descricao          String?
+  nome                String
+  email               String                @unique
+  senha               String
+  cpf                 String                @unique
+  data_de_nascimento  DateTime
+  telefone            String
+  foto_url            String?
+  descricao           String?
   //informações de endereço
-  logradouro         String
-  numero             String
-  complemento        String?
-  bairro             String
-  cidade             String
-  estado             String
-  cep                String
-  localizacao        String
+  logradouro          String
+  numero              String
+  complemento         String?
+  bairro              String
+  cidade              String
+  estado              String
+  cep                 String
+  localizacao         String
   //informações de verificação
-  verificado         StatusDeVerificacao
-  token_verificacao  String?
-  tipo               TipoDeUsuario
+  verificado          StatusDeVerificacao
+  token_verificacao   String?
+  tipo                TipoDeUsuario
   //informações de relacionamento
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  Denuncias           Denuncias[]
+  InscricoesDeEventos InscricoesDeEventos[]
 }
 
 model Admin {
-  id                String              @id @default(cuid())
+  id                    String                  @id @unique
   //informações pessoais
-  nome              String
-  email             String              @unique
-  senha             String
-  adminType         AdminType
+  nome                  String
+  email                 String                  @unique
+  senha                 String
+  adminType             AdminType
   //informações de relacionamento
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
   //informações de verificação
-  verificado        StatusDeVerificacao
-  token_verificacao String?
+  verificado            StatusDeVerificacao
+  token_verificacao     String?
   //informações de permissões
-  Permissoes        Permissoes[]
+  Permissoes            Permissoes[]
+  ComentarioDeDenuncias ComentarioDeDenuncias[]
 }
 
 model Permissoes {
-  id                      String  @id @default(cuid())
+  id                      String  @id @unique
   admin                   Admin   @relation(fields: [adminId], references: [id], onDelete: Cascade)
   adminId                 String
   criacao_de_usuario      Boolean
@@ -68,8 +71,8 @@ model Permissoes {
 }
 
 // --> antiga tabela de requisições
-model Ambulante { 
-  id                      String              @id @default(cuid())
+model Ambulante {
+  id                      String              @id @unique
   usuario                 Usuario?            @relation(fields: [usuario_id], references: [id])
   usuario_id              String?
   //informações pessoais
@@ -84,6 +87,57 @@ model Ambulante {
   //informações de relacionamento
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
+}
+
+model Denuncias {
+  id                      String                  @id @unique
+  usuario                 Usuario?                @relation(fields: [usuario_id], references: [id])
+  usuario_id              String?
+  //informações da denuncia
+  descricao               String
+  status                  StatusDeDenuncia
+  localizacao             String?
+  fotos                   String[]
+  codigo_de_busca         String
+  //informações de fiscal
+  comentarios_de_denuncia ComentarioDeDenuncias[]
+  //informações de relacionamento
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @updatedAt
+}
+
+model ComentarioDeDenuncias {
+  id          String     @id @unique
+  denuncia    Denuncias? @relation(fields: [denuncia_id], references: [id], onDelete: Cascade)
+  denuncia_id String
+  fiscal      Admin?     @relation(fields: [fiscal_id], references: [id])
+  fiscal_id   String
+  //informações do comentario
+  descricao   String
+}
+
+model Evento {
+  id             String   @id @unique
+  //informações do evento
+  nome           String
+  data_de_inicio DateTime
+  data_de_fim    DateTime
+  localizacao    String
+  ativo          Boolean
+  imagens        String[]
+  descricao      String
+  vagas          Int
+  InscricoesDeEventos InscricoesDeEventos[]
+}
+
+model InscricoesDeEventos {
+  id                String              @id @unique
+  evento            Evento?             @relation(fields: [evento_id], references: [id], onDelete: Cascade)
+  evento_id         String
+  usuario           Usuario?            @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  usuario_id        String
+  data_de_inscricao DateTime            @default(now())
+  status            StatusDeVerificacao
 }
 
 enum TipoDeUsuario {
@@ -101,4 +155,10 @@ enum AdminType {
   SUPER_ADMIN
   GESTOR
   FISCAL
+}
+
+enum StatusDeDenuncia {
+  RECEBIDA
+  EM_ANALISE
+  CONCLUIDA
 }

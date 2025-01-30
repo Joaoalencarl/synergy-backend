@@ -4,6 +4,7 @@ import { UpdateAmbulanteDto } from './dto/update-ambulante.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { UserMiddleware } from 'src/usuario/middleware/user.middleware';
+import { generateUniqueCustomId } from 'src/config/generate-custom-id.config';
 
 @Injectable()
 export class AmbulanteService {
@@ -13,8 +14,10 @@ export class AmbulanteService {
   ) {}
   async create(createAmbulanteDto: CreateAmbulanteDto, usuario_id: string) {
     await this.userMiddleware.userExists(usuario_id);
+    const id = await generateUniqueCustomId(6, this.prisma, 'ambulante');
     const data: Prisma.AmbulanteCreateInput = {
       ...createAmbulanteDto,
+      id,
       status: 'PENDENTE',
       usuario: {
         connect: {

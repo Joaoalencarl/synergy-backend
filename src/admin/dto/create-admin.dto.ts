@@ -12,6 +12,8 @@ import { Type } from 'class-transformer';
 import { CreatePermissoesDto } from './permissoes.dto';
 
 export class CreateAdminDto {
+  @IsOptional({ message: 'O id informado é inválido' })
+  id: string;
   @IsString({ message: 'O nome informado é inválido' })
   @IsNotEmpty({ message: 'O nome não pode ser vazio' })
   nome: string;
