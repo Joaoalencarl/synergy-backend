@@ -117,27 +117,27 @@ model ComentarioDeDenuncias {
 }
 
 model Evento {
-  id                  String                @id @unique
+  id             String   @id @unique
   //informações do evento
-  nome                String
-  data_de_inicio      DateTime
-  data_de_fim         DateTime
-  localizacao         String
-  ativo               Boolean
-  imagens             String[]
-  descricao           String
-  vagas               Int
+  nome           String
+  data_de_inicio DateTime
+  data_de_fim    DateTime
+  localizacao    String
+  ativo          Boolean
+  imagens        String[]
+  descricao      String
+  vagas          Int
   InscricoesDeEventos InscricoesDeEventos[]
 }
 
 model InscricoesDeEventos {
-  id         String   @id @unique
-  evento     Evento?  @relation(fields: [evento_id], references: [id], onDelete: Cascade)
-  evento_id  String
-  usuario    Usuario? @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
-  usuario_id String
-  data_de_inscricao  DateTime @default(now())
-  status    StatusDeVerificacao
+  id                String              @id @unique
+  evento            Evento?             @relation(fields: [evento_id], references: [id], onDelete: Cascade)
+  evento_id         String
+  usuario           Usuario?            @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  usuario_id        String
+  data_de_inscricao DateTime            @default(now())
+  status            StatusDeVerificacao
 }
 
 enum TipoDeUsuario {
