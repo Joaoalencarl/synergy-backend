@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { EmailService } from 'src/email/email.service';
 import { UserMiddleware } from './middleware/user.middleware';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { generateUniqueCustomId } from 'src/config/generate-custom-id.config';
 
 @Injectable()
 export class UserService {
@@ -18,9 +19,11 @@ export class UserService {
   ) {}
 
   async createUser(criarUsuarioDto: CriarUsuarioDto): Promise<Usuario> {
+    const id = await generateUniqueCustomId(6, this.prisma, 'usuario');
     const tokenDeVerificacao = uuidv4();
     const data: Prisma.UsuarioCreateInput = {
       ...criarUsuarioDto,
+      id,
       senha: await bcrypt.hash(criarUsuarioDto.senha, 10),
       token_verificacao: tokenDeVerificacao,
     };

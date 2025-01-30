@@ -1,6 +1,9 @@
-import { IsBoolean, IsNotEmpty } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreatePermissoesDto {
+  @IsOptional({ message: 'O id informado é inválido' })
+  id: string;
+
   @IsBoolean()
   @IsNotEmpty()
   criacao_de_usuario: boolean;

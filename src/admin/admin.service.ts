@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Prisma, StatusDeVerificacao } from '@prisma/client';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import * as bcrypt from 'bcrypt';
+import { generateUniqueCustomId } from 'src/config/generate-custom-id.config';
 
 @Injectable()
 export class AdminService {
@@ -16,9 +17,11 @@ export class AdminService {
 
   async createAdmin(createAdminDto: CreateAdminDto) {
     const tokenDeVerificacao = uuidv4();
+    const id = await generateUniqueCustomId(6, this.prisma, 'admin');
     const permissoes = createAdminDto.Permissoes;
     const data: Prisma.AdminCreateInput = {
       ...createAdminDto,
+      id: id,
       senha: await bcrypt.hash(createAdminDto.senha, 10),
       token_verificacao: tokenDeVerificacao,
       Permissoes: {
