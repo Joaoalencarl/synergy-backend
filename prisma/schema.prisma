@@ -12,24 +12,24 @@ model Usuario {
   ambulante           Ambulante[]
   //informações pessoais
   nome                String
-  email               String                @unique
+  email               String               @unique
   senha               String
   cpf                 String                @unique
-  data_de_nascimento  DateTime
-  telefone            String
+  data_de_nascimento  DateTime?
+  telefone            String?
   foto_url            String?
   descricao           String?
   //informações de endereço
-  logradouro          String
-  numero              String
+  logradouro          String?
+  numero              String?
   complemento         String?
-  bairro              String
-  cidade              String
-  estado              String
-  cep                 String
-  localizacao         String
+  bairro              String?
+  cidade              String?
+  estado              String?
+  cep                 String?
+  localizacao         String?
   //informações de verificação
-  verificado          StatusDeVerificacao
+  verificado          StatusDeVerificacao?
   token_verificacao   String?
   tipo                TipoDeUsuario
   //informações de relacionamento

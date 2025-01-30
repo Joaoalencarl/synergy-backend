@@ -17,7 +17,6 @@ import { StatusDeVerificacao } from '@prisma/client';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  @IsPublic()
   @Post()
   async createAdmin(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.createAdmin(createAdminDto);
@@ -26,6 +25,7 @@ export class AdminController {
 
     curl --location '{{host}}/admin' \
   --header 'Content-Type: application/json' \
+  --header 'Authorization: Bearer {{BearerToken}}' \
   --data-raw '{
     "nome": "",
     "email": "",

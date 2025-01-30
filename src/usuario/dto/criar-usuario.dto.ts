@@ -47,11 +47,11 @@ export class CriarUsuarioDto {
 
   @IsDate({ message: 'A data de nascimento informada é inválida' })
   @Type(() => Date)
-  @IsNotEmpty({ message: 'A data de nascimento não pode ser vazia' })
+  @IsOptional()
   data_de_nascimento: Date;
 
   @IsPhoneNumber('BR', { message: 'O telefone informado é inválido' })
-  @IsNotEmpty({ message: 'O telefone não pode ser vazio' })
+  @IsOptional()
   telefone: string;
 
   @IsOptional({ message: 'A foto informada é inválida' })
@@ -67,36 +67,38 @@ export class CriarUsuarioDto {
   verificado: StatusDeVerificacao = StatusDeVerificacao.PENDENTE;
 
   @IsString({ message: 'O tipo de usuário informado é inválido' })
+  @IsOptional()
   tipo: TipoDeUsuario;
 
   @IsString({ message: 'O nome da rua informado é inválido' })
-  @IsNotEmpty({ message: 'O logradouro não pode ser vazio' })
+  @IsOptional()
   logradouro: string;
 
   @IsString({ message: 'O número informado é inválido' })
-  @IsNotEmpty({ message: 'O número não pode ser vazio' })
+  @IsOptional()
   numero: string;
 
   @IsString({ message: 'O complemento informado é inválido' })
-  @IsNotEmpty({ message: 'O complemento não pode ser vazio' })
+  @IsOptional()
   complemento: string;
 
   @IsString({ message: 'O bairro informado é inválido' })
-  @IsNotEmpty({ message: 'O bairro não pode ser vazio' })
+  @IsOptional()
   bairro: string;
 
   @IsString({ message: 'A cidade informada é inválida' })
-  @IsNotEmpty({ message: 'A cidade não pode ser vazia' })
+  @IsOptional()
   cidade: string;
 
   @IsString({ message: 'O estado informado é inválido' })
-  @IsNotEmpty({ message: 'O estado não pode ser vazio' })
+  @IsOptional()
   estado: string;
 
   @IsString({ message: 'O CEP informado é inválido' })
-  @IsNotEmpty({ message: 'O CEP não pode ser vazio' })
+  @IsOptional()
   cep: string;
 
   @IsString({ message: 'A localização informada é inválida' })
+  @IsOptional()
   localizacao: string; // GeoJSON Point (stringified)
 }
