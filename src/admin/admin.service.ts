@@ -25,7 +25,10 @@ export class AdminService {
       senha: await bcrypt.hash(createAdminDto.senha, 10),
       token_verificacao: tokenDeVerificacao,
       Permissoes: {
-        create: permissoes,
+        create: {
+          id: uuidv4(),
+          ...permissoes,
+        },
       },
     };
 
@@ -51,7 +54,10 @@ export class AdminService {
     const data: Prisma.AdminUpdateInput = {
       ...updateAdminDto,
       Permissoes: {
-        create: permissoes,
+        create: {
+          id: id,
+          ...permissoes,
+        },
       },
     };
 
