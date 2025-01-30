@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { EmailService } from 'src/email/email.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
@@ -16,6 +16,16 @@ export class AdminService {
   ) {}
 
   async createAdmin(createAdminDto: CreateAdminDto) {
+    //vai sair na orimização do produto e vai para uma rota auxiliar
+    if (
+      (await this.prisma.admin.findFirst({
+        where: { email: createAdminDto.email },
+      })) !== null
+    ) {
+      throw new NotFoundException('Email já cadastrado');
+    }
+
+    // ---------------------
     const tokenDeVerificacao = uuidv4();
     const id = await generateUniqueCustomId(6, this.prisma, 'admin');
     const permissoes = createAdminDto.Permissoes;
@@ -86,7 +96,7 @@ export class AdminService {
     });
 
     if (!admin) {
-      throw new Error('Token de verificação inválido');
+      throw new NotFoundException('Token de verificação inválido');
     }
 
     await this.prisma.admin.update({
@@ -107,19 +117,19 @@ export class AdminService {
     if (
       (await this.prisma.admin.findUnique({ where: { id: admin_id } })) === null
     ) {
-      throw new Error('Admin não encontrado');
+      throw new NotFoundException('Admin não encontrado');
     } else if (
       (await this.prisma.ambulante.findUnique({
         where: { id: ambulante_id },
       })) === null
     ) {
-      throw new Error('Ambulante não encontrado');
+      throw new NotFoundException('Ambulante não encontrado');
     } else if (
       alterarStatus !== 'APROVADO' &&
       alterarStatus !== 'REPROVADO' &&
       alterarStatus !== 'PENDENTE'
     ) {
-      throw new Error('Status inválido');
+      throw new NotFoundException('Status inválido');
     }
 
     const data = this.prisma.ambulante.update({
