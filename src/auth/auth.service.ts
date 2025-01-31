@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UnauthorizedError } from './errors/unauthorized.error';
@@ -9,13 +13,17 @@ import { UserToken } from './models/UserToken';
 import { StatusDeVerificacao } from '@prisma/client';
 import { Admin } from 'src/admin/entities/admin.entity';
 import { AdminService } from 'src/admin/admin.service';
-
+import { PrismaService } from 'src/prisma/prisma.service';
+import { EmailService } from 'src/email/email.service';
+import { generateUniqueCustomId } from 'src/config/generate-custom-id.config';
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly adminService: AdminService,
+    private readonly prisma: PrismaService,
+    private readonly emailService: EmailService,
   ) {}
 
   async login(user: Usuario | Admin): Promise<UserToken> {
@@ -61,5 +69,63 @@ export class AuthService {
     }
 
     throw new UnauthorizedError('Enderesso de e-mail ou senha inválidos.');
+  }
+  async requestPasswordReset(email: string) {
+    const user =
+      (await this.userService.findByEmail(email)) ||
+      (await this.adminService.findByEmail(email));
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    const token = await generateUniqueCustomId(4, this.prisma, 'Usuario');
+    const expires = new Date();
+    expires.setHours(expires.getHours() + 1);
+
+    await this.prisma.usuario.update({
+      where: { email },
+      data: {
+        passwordResetToken: token,
+        passwordResetTokenExpires: expires,
+      },
+    });
+
+    const resetLink = `${process.env.URL}/auth/reset-password?token=${token}`;
+    await this.emailService.sendMail(
+      email,
+      'Recuperação de Senha',
+      `Clique no link para redefinir sua senha: ${resetLink}`,
+    );
+
+    return { message: 'E-mail de recuperação de senha enviado com sucesso' };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const user = await this.prisma.usuario.findFirst({
+      where: {
+        passwordResetToken: token,
+        passwordResetTokenExpires: {
+          gte: new Date(),
+        },
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Token inválido ou expirado');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await this.prisma.usuario.update({
+      where: { id: user.id },
+      data: {
+        senha: hashedPassword,
+        passwordResetToken: null,
+        passwordResetTokenExpires: null,
+      },
+    });
+
+    return { message: 'Senha redefinida com sucesso' };
   }
 }

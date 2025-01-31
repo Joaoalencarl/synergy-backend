@@ -8,10 +8,19 @@ import { EmailService } from './email/email.service';
 import { AdminModule } from './admin/admin.module';
 import { AmbulanteModule } from './ambulante/ambulante.module';
 import { EventoModule } from './evento/evento.module';
+import { DenunciaModule } from './denuncia/denuncia.module';
 import 'dotenv/config';
 
 @Module({
-  imports: [PrismaModule, UserModule, AuthModule, AdminModule, AmbulanteModule, EventoModule],
+  imports: [
+    PrismaModule,
+    UserModule,
+    AuthModule,
+    AdminModule,
+    AmbulanteModule,
+    EventoModule,
+    DenunciaModule,
+  ],
   controllers: [],
   providers: [
     {

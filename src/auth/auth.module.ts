@@ -8,6 +8,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { LoginValidationMiddleware } from './middlewares/login-validation.middleware';
 import { AdminModule } from 'src/admin/admin.module';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [
@@ -20,7 +22,13 @@ import { AdminModule } from 'src/admin/admin.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    PrismaService,
+    EmailService,
+  ],
   exports: [AuthService],
 })
 export class AuthModule implements NestModule {

@@ -8,35 +8,37 @@ datasource db {
 }
 
 model Usuario {
-  id                  String                @id @unique
-  ambulante           Ambulante[]
+  id                        String                @id @unique
+  ambulante                 Ambulante[]
   //informações pessoais
-  nome                String
-  email               String               @unique
-  senha               String
-  cpf                 String                @unique
-  data_de_nascimento  DateTime?
-  telefone            String?
-  foto_url            String?
-  descricao           String?
+  nome                      String
+  email                     String                @unique
+  senha                     String
+  cpf                       String                @unique
+  data_de_nascimento        DateTime?
+  telefone                  String?
+  foto_url                  String?
+  descricao                 String?
   //informações de endereço
-  logradouro          String?
-  numero              String?
-  complemento         String?
-  bairro              String?
-  cidade              String?
-  estado              String?
-  cep                 String?
-  localizacao         String?
+  logradouro                String?
+  numero                    String?
+  complemento               String?
+  bairro                    String?
+  cidade                    String?
+  estado                    String?
+  cep                       String?
+  localizacao               String?
   //informações de verificação
-  verificado          StatusDeVerificacao?
-  token_verificacao   String?
-  tipo                TipoDeUsuario
+  verificado                StatusDeVerificacao?
+  token_verificacao         String?
+  tipo                      TipoDeUsuario
+  passwordResetToken        String?
+  passwordResetTokenExpires DateTime?
   //informações de relacionamento
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  Denuncias           Denuncias[]
-  InscricoesDeEventos InscricoesDeEventos[]
+  createdAt                 DateTime              @default(now())
+  updatedAt                 DateTime              @updatedAt
+  Denuncias                 Denuncias[]
+  InscricoesDeEventos       InscricoesDeEventos[]
 }
 
 model Admin {
@@ -117,16 +119,16 @@ model ComentarioDeDenuncias {
 }
 
 model Evento {
-  id             String   @id @unique
+  id                  String                @id @unique
   //informações do evento
-  nome           String
-  data_de_inicio DateTime
-  data_de_fim    DateTime
-  localizacao    String
-  ativo          Boolean
-  imagens        String[]
-  descricao      String
-  vagas          Int
+  nome                String
+  data_de_inicio      DateTime
+  data_de_fim         DateTime
+  localizacao         String
+  ativo               Boolean
+  imagens             String[]
+  descricao           String
+  vagas               Int
   InscricoesDeEventos InscricoesDeEventos[]
 }
 

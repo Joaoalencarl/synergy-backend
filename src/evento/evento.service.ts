@@ -9,6 +9,9 @@ import { Prisma } from '@prisma/client';
 export class EventoService {
   constructor(private readonly prisma: PrismaService) {}
   async create(createEventoDto: CreateEventoDto, adminId: string) {
+    if (!adminId) {
+      return { error: 'AdminId precisa ser informado' };
+    }
     const id = await generateUniqueCustomId(6, this.prisma, 'evento');
     if (
       (await this.prisma.admin.findUnique({ where: { id: adminId } })) === null
