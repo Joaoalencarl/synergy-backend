@@ -9,8 +9,6 @@ datasource db {
 
 model Usuario {
   id                        String                @id @unique
-  ambulante                 Ambulante[]
-  //informações pessoais
   nome                      String
   email                     String                @unique
   senha                     String
@@ -19,7 +17,6 @@ model Usuario {
   telefone                  String?
   foto_url                  String?
   descricao                 String?
-  //informações de endereço
   logradouro                String?
   numero                    String?
   complemento               String?
@@ -28,40 +25,34 @@ model Usuario {
   estado                    String?
   cep                       String?
   localizacao               String?
-  //informações de verificação
   verificado                StatusDeVerificacao?
-  token_verificacao         String?
   tipo                      TipoDeUsuario
-  passwordResetToken        String?
-  passwordResetTokenExpires DateTime?
-  //informações de relacionamento
   createdAt                 DateTime              @default(now())
   updatedAt                 DateTime              @updatedAt
+  token_verificacao         String?
+  passwordResetToken        String?
+  passwordResetTokenExpires DateTime?
+  ambulante                 Ambulante[]
   Denuncias                 Denuncias[]
   InscricoesDeEventos       InscricoesDeEventos[]
 }
 
 model Admin {
   id                    String                  @id @unique
-  //informações pessoais
   nome                  String
   email                 String                  @unique
   senha                 String
   adminType             AdminType
-  //informações de relacionamento
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
-  //informações de verificação
-  verificado            StatusDeVerificacao
   token_verificacao     String?
-  //informações de permissões
-  Permissoes            Permissoes[]
+  verificado            StatusDeVerificacao
   ComentarioDeDenuncias ComentarioDeDenuncias[]
+  Permissoes            Permissoes[]
 }
 
 model Permissoes {
   id                      String  @id @unique
-  admin                   Admin   @relation(fields: [adminId], references: [id], onDelete: Cascade)
   adminId                 String
   criacao_de_usuario      Boolean
   distribuicao_de_tarefas Boolean
@@ -70,14 +61,12 @@ model Permissoes {
   infracoes               Boolean
   eventos                 Boolean
   relatorios_estrategicos Boolean
+  admin                   Admin   @relation(fields: [adminId], references: [id], onDelete: Cascade)
 }
 
-// --> antiga tabela de requisições
 model Ambulante {
   id                      String              @id @unique
-  usuario                 Usuario?            @relation(fields: [usuario_id], references: [id])
   usuario_id              String?
-  //informações pessoais
   descricao               String
   status                  StatusDeVerificacao
   nome_do_negoocio        String
@@ -86,41 +75,36 @@ model Ambulante {
   localizacao_do__negocio String
   fotos_do_negocio        String[]
   documentacao            String[]
-  //informações de relacionamento
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
+  usuario                 Usuario?            @relation(fields: [usuario_id], references: [id])
 }
 
 model Denuncias {
   id                      String                  @id @unique
-  usuario                 Usuario?                @relation(fields: [usuario_id], references: [id])
   usuario_id              String?
-  //informações da denuncia
   descricao               String
   status                  StatusDeDenuncia
   localizacao             String?
   fotos                   String[]
   codigo_de_busca         String
-  //informações de fiscal
-  comentarios_de_denuncia ComentarioDeDenuncias[]
-  //informações de relacionamento
   createdAt               DateTime                @default(now())
   updatedAt               DateTime                @updatedAt
+  comentarios_de_denuncia ComentarioDeDenuncias[]
+  usuario                 Usuario?                @relation(fields: [usuario_id], references: [id])
 }
 
 model ComentarioDeDenuncias {
-  id          String     @id @unique
-  denuncia    Denuncias? @relation(fields: [denuncia_id], references: [id], onDelete: Cascade)
+  id          String    @id @unique
   denuncia_id String
-  fiscal      Admin?     @relation(fields: [fiscal_id], references: [id])
   fiscal_id   String
-  //informações do comentario
   descricao   String
+  denuncia    Denuncias @relation(fields: [denuncia_id], references: [id], onDelete: Cascade)
+  fiscal      Admin     @relation(fields: [fiscal_id], references: [id])
 }
 
 model Evento {
   id                  String                @id @unique
-  //informações do evento
   nome                String
   data_de_inicio      DateTime
   data_de_fim         DateTime
@@ -134,12 +118,12 @@ model Evento {
 
 model InscricoesDeEventos {
   id                String              @id @unique
-  evento            Evento?             @relation(fields: [evento_id], references: [id], onDelete: Cascade)
   evento_id         String
-  usuario           Usuario?            @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
   usuario_id        String
   data_de_inscricao DateTime            @default(now())
   status            StatusDeVerificacao
+  evento            Evento              @relation(fields: [evento_id], references: [id], onDelete: Cascade)
+  usuario           Usuario             @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 }
 
 enum TipoDeUsuario {

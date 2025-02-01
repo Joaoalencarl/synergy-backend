@@ -60,15 +60,8 @@ export class AdminService {
   }
 
   async updateAdmin(updateAdminDto: UpdateAdminDto, id: string) {
-    const permissoes = updateAdminDto.Permissoes;
     const data: Prisma.AdminUpdateInput = {
       ...updateAdminDto,
-      Permissoes: {
-        create: {
-          id: id,
-          ...permissoes,
-        },
-      },
     };
 
     const updatedAdmin = await this.prisma.admin.update({
