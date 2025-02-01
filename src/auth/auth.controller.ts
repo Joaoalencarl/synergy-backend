@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { AdminLocalAuthGuard } from './guards/local-auth.guard';
 import { AuthRequest } from './models/AuthRequest';
 import { IsPublic } from './decorators/is-public.decorator';
 
@@ -32,6 +33,22 @@ export class AuthController {
       "email": "",
       "password": ""
   }'
+  */
+
+  @IsPublic()
+  @UseGuards(AdminLocalAuthGuard)
+  @Post('admin/login')
+  @HttpCode(HttpStatus.OK)
+  async adminLogin(@Request() req: AuthRequest) {
+    return this.authService.login(req.user);
+  }
+  /* 
+  curl --location '{{host}}/admin/login' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "email":"",
+    "password":""
+}'
   */
 
   @Post('request-password-reset')

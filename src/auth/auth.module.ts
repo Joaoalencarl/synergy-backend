@@ -10,6 +10,7 @@ import { LoginValidationMiddleware } from './middlewares/login-validation.middle
 import { AdminModule } from 'src/admin/admin.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EmailService } from 'src/email/email.service';
+import { AdminLocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { EmailService } from 'src/email/email.service';
   providers: [
     AuthService,
     LocalStrategy,
+    AdminLocalStrategy,
     JwtStrategy,
     PrismaService,
     EmailService,

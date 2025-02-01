@@ -19,3 +19,18 @@ export class LocalAuthGuard extends AuthGuard('local') {
     return user;
   }
 }
+
+@Injectable()
+export class AdminLocalAuthGuard extends AuthGuard('admin-local') {
+  canActivate(context: ExecutionContext) {
+    return super.canActivate(context);
+  }
+
+  handleRequest(err, user) {
+    if (err || !user) {
+      throw new UnauthorizedException(err?.message);
+    }
+
+    return user;
+  }
+}

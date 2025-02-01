@@ -19,10 +19,11 @@ export class LoginValidationMiddleware implements NestMiddleware {
     const validations = await validate(loginRequestBody);
 
     if (validations.length) {
+      const messages = validations.reduce((acc, curr) => {
+        return [...acc, ...Object.values(curr.constraints)];
+      }, []);
       throw new BadRequestException(
-        validations.reduce((acc, curr) => {
-          return [...acc, ...Object.values(curr.constraints)];
-        }, []),
+        `Erro de validação: ${messages.join(', ')}`,
       );
     }
 

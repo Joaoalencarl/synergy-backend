@@ -39,10 +39,8 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string): Promise<any> {
-    const user =
-      (await this.userService.findByEmail(email)) ||
-      (await this.adminService.findByEmail(email));
-    console.log(user);
+    const user = await this.userService.findByEmail(email);
+
     if (!user) {
       throw new UnauthorizedException('Conta não existe.');
     }
@@ -70,6 +68,29 @@ export class AuthService {
 
     throw new UnauthorizedError('Enderesso de e-mail ou senha inválidos.');
   }
+
+  async validateAdmin(email: string, password: string): Promise<any> {
+    const admin = await this.adminService.findByEmail(email);
+    if (!admin) {
+      throw new UnauthorizedException('Conta não existe.');
+    }
+    if (admin.verificado !== StatusDeVerificacao.APROVADO) {
+      throw new UnauthorizedException(
+        'Verifique seu e-mail para ativar a conta.',
+      );
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, admin.senha);
+    if (isPasswordValid) {
+      return {
+        ...admin,
+        senha: undefined,
+      };
+    }
+
+    throw new UnauthorizedError('Enderesso de e-mail ou senha inválidos.');
+  }
+
   async requestPasswordReset(email: string) {
     const user =
       (await this.userService.findByEmail(email)) ||

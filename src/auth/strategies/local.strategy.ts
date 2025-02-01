@@ -13,3 +13,17 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     return this.authService.validateUser(email, password);
   }
 }
+
+@Injectable()
+export class AdminLocalStrategy extends PassportStrategy(
+  Strategy,
+  'admin-local',
+) {
+  constructor(private authService: AuthService) {
+    super({ usernameField: 'email' });
+  }
+
+  validate(email: string, password: string) {
+    return this.authService.validateAdmin(email, password);
+  }
+}
