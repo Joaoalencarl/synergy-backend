@@ -92,9 +92,9 @@ export class EventoController {
   @Get('inscricao/:evento-id')
   subscribeEvent(
     @Param('evento-id') eventoId: string,
-    @Query('ambulante-id') ambulanteId: string,
+    @Query('usuario-id') usuarioId: string,
   ) {
-    return this.eventoService.subscribeEvent(eventoId, ambulanteId);
+    return this.eventoService.subscribeEvent(eventoId, usuarioId);
   }
   /* --> Inscreve o ambulante no evento, precisa do evento-id e do ambulante-id.
   curl --location '{{host}}/evento/inscricao/{{evento-id}}?ambulante-id={{ambulante-id}}' \
@@ -102,4 +102,6 @@ export class EventoController {
   --header 'Authorization Bearer {{token}}' \
   --request GET
   */
+
+  // --> Lista de inscritos com o nome dos ambulantes inscritos
 }

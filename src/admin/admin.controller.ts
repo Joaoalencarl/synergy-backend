@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Patch,
   Post,
   Query,
@@ -17,6 +19,7 @@ import { StatusDeVerificacao } from '@prisma/client';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
+  @HttpCode(HttpStatus.OK)
   @Post()
   async createAdmin(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.createAdmin(createAdminDto);
@@ -45,6 +48,7 @@ export class AdminController {
 
   */
 
+  @HttpCode(HttpStatus.OK)
   @Patch()
   async updateAdmin(
     @Body() updateAdminDto: UpdateAdminDto,
@@ -63,6 +67,7 @@ export class AdminController {
 
   */
 
+  @HttpCode(HttpStatus.OK)
   @Delete()
   async deleteAdmin(@Query('id') id: string) {
     return this.adminService.deleteAdmin(id);
@@ -75,6 +80,7 @@ export class AdminController {
 
   */
 
+  @HttpCode(HttpStatus.OK)
   @IsPublic()
   @Get('confirmar-email')
   async confirmarEmail(@Query('token') token: string) {
@@ -88,6 +94,7 @@ export class AdminController {
       --data ''
     */
 
+  @HttpCode(HttpStatus.OK)
   @Patch('requisicao-de-ambulante:admin_id')
   async requisicaoDeAmbulante(
     @Query('ambulante_id') ambulante_id: string,
@@ -108,5 +115,17 @@ export class AdminController {
       --data '{
         "status": "APROVADO", "REPROVADO", "PENDENTE"
       }'
+    */
+
+  @HttpCode(HttpStatus.OK)
+  @Get()
+  async findAdmin(@Query('search') search: string) {
+    return this.adminService.findByEmail(search);
+  }
+  /* --> Para buscar um administrador, basta passar o termo de busca.
+
+      curl --location --request GET 'http://{{host}}/admin?search={{Search}}' \
+      --header 'Authorization: Bearer {{BearerToken}}' \
+      --data ''
     */
 }

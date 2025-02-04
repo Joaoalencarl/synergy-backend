@@ -63,7 +63,7 @@ export class UpdateUserDto {
   descricao?: string;
 
   @IsOptional({ message: 'O status de verificação informado é inválido' })
-  verificado?: StatusDeVerificacao = StatusDeVerificacao.PENDENTE;
+  verificado?: StatusDeVerificacao;
 
   @IsString({ message: 'O tipo de usuário informado é inválido' })
   @IsOptional()
@@ -79,7 +79,7 @@ export class UpdateUserDto {
 
   @IsString({ message: 'O complemento informado é inválido' })
   @IsOptional()
-  complemento?: string;
+  complemento?: string | null;
 
   @IsString({ message: 'O bairro informado é inválido' })
   @IsOptional()

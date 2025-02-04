@@ -8,13 +8,13 @@ import { Prisma, StatusDeDenuncia } from '@prisma/client';
 export class DenunciaService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createDenunciaDto: CreateDenunciaDto, usuario_id?: string) {
+  async create(createDenunciaDto: CreateDenunciaDto, usuario_id: string) {
     const id = await generateUniqueCustomId(6, this.prisma, 'Denuncias');
-    //sem usuário crie sem a conexão
     if (!usuario_id) {
       const data: Prisma.DenunciasCreateInput = {
         ...createDenunciaDto,
         id,
+        //adicionar o usuário que fez a denúncia
         status: StatusDeDenuncia.RECEBIDA,
         codigo_de_busca: id,
       };
@@ -71,7 +71,7 @@ export class DenunciaService {
 
     return {
       mensagem: 'Denúncia deletada com sucesso',
-      denuncia_deletada,
+      ...denuncia_deletada,
     };
   }
 
@@ -79,6 +79,7 @@ export class DenunciaService {
     if (!comentario || !id || !admin_id) {
       return {
         mensagem: 'Informe o comentário, id da denúncia e id do fiscal',
+        status: 200,
       };
     }
 

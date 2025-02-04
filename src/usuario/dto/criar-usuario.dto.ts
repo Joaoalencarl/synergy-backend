@@ -48,7 +48,7 @@ export class CriarUsuarioDto {
   @IsDate({ message: 'A data de nascimento informada é inválida' })
   @Type(() => Date)
   @IsOptional()
-  data_de_nascimento: Date;
+  data_de_nascimento: Date | null;
 
   @IsPhoneNumber('BR', { message: 'O telefone informado é inválido' })
   @IsOptional()
@@ -62,7 +62,6 @@ export class CriarUsuarioDto {
   @IsString({ message: 'A descrição informada é inválida' })
   @MaxLength(500, { message: 'A descrição informada é muito longa' })
   descricao?: string;
-
   @IsOptional({ message: 'O status de verificação informado é inválido' })
   verificado: StatusDeVerificacao = StatusDeVerificacao.PENDENTE;
 
@@ -80,7 +79,7 @@ export class CriarUsuarioDto {
 
   @IsString({ message: 'O complemento informado é inválido' })
   @IsOptional()
-  complemento: string;
+  complemento: string | null;
 
   @IsString({ message: 'O bairro informado é inválido' })
   @IsOptional()

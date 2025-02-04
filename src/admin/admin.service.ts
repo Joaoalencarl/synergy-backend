@@ -135,4 +135,24 @@ export class AdminService {
       ...data,
     };
   }
+
+  async findAdmin(search: string) {
+    const admin = await this.prisma.admin.findFirst({
+      where: {
+        OR: [{ id: { contains: search } }, { email: { contains: search } }],
+      },
+      include: { Permissoes: true },
+    });
+
+    if (!admin) {
+      throw new NotFoundException('Admin não encontrado');
+    }
+
+    return {
+      message: 'Admin encontrado com sucesso',
+      ...admin,
+      senha: undefined,
+      token_verificacao: undefined,
+    };
+  }
 }
