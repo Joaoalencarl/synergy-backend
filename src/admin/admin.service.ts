@@ -53,6 +53,7 @@ export class AdminService {
 
     return {
       message: 'Admin criado com sucesso',
+      status: 'success',
       ...createdAdmin,
       senha: undefined,
       token_verificacao: undefined,
@@ -71,6 +72,7 @@ export class AdminService {
 
     return {
       message: 'Admin atualizado com sucesso',
+      status: 'success',
       ...updatedAdmin,
       senha: undefined,
       token_verificacao: undefined,
@@ -132,6 +134,7 @@ export class AdminService {
 
     return {
       message: 'Status do ambulante alterado com sucesso',
+      status: 'success',
       ...data,
     };
   }
@@ -150,6 +153,7 @@ export class AdminService {
 
     return {
       message: 'Admin encontrado com sucesso',
+      status: 'success',
       ...admin,
       senha: undefined,
       token_verificacao: undefined,

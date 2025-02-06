@@ -33,7 +33,6 @@ export class EventoService {
   }
 
   async findEvent(search: string) {
-    //busca pode ser feita por nome, localização ou data
     const eventos = await this.prisma.evento.findMany({
       where: {
         OR: [
@@ -50,6 +49,7 @@ export class EventoService {
 
     return {
       message: 'Eventos encontrados com sucesso',
+      status: 'success',
       eventos,
     };
   }
@@ -76,6 +76,7 @@ export class EventoService {
 
     return {
       message: 'Evento atualizado com sucesso',
+      status: 'success',
       ...updatedEvento,
     };
   }
@@ -87,7 +88,7 @@ export class EventoService {
 
     this.prisma.evento.delete({ where: { id: eventoId } });
 
-    return { message: 'Evento deletado com sucesso' };
+    return { message: 'Evento deletado com sucesso', status: 'success' };
   }
 
   async subscribeEvent(eventoId: string, ambulanteId: string) {
@@ -134,6 +135,7 @@ export class EventoService {
 
     return {
       message: 'Inscrição realizada com sucesso',
+      status: 'success',
       ...inscricaoCriada,
     };
   }

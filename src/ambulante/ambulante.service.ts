@@ -30,6 +30,7 @@ export class AmbulanteService {
 
     return {
       message: 'Ambulante criado com sucesso, aguarde a verificação',
+      status: 'success',
       ...ambulante,
     };
   }
@@ -40,6 +41,7 @@ export class AmbulanteService {
     else {
       return {
         message: 'Ambulante encontrado',
+        status: 'success',
         ...data,
       };
     }
@@ -57,6 +59,7 @@ export class AmbulanteService {
 
     return {
       message: 'Ambulante atualizado com sucesso',
+      status: 'success',
       updatedAmbulante,
     };
   }
@@ -68,6 +71,7 @@ export class AmbulanteService {
     else {
       return {
         message: 'Ambulante deletado com sucesso',
+        status: 'success',
         data,
       };
     }

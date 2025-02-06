@@ -61,6 +61,7 @@ export class AuthService {
       console.log(isPasswordValid);
       if (isPasswordValid) {
         return {
+          status: 'success',
           ...user,
           senha: undefined,
         };
@@ -148,6 +149,6 @@ export class AuthService {
       },
     });
 
-    return { message: 'Senha redefinida com sucesso' };
+    return { message: 'Senha redefinida com sucesso', status: 'success' };
   }
 }
