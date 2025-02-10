@@ -9,6 +9,7 @@ import { AdminModule } from './admin/admin.module';
 import { AmbulanteModule } from './ambulante/ambulante.module';
 import { EventoModule } from './evento/evento.module';
 import { DenunciaModule } from './denuncia/denuncia.module';
+import { InfracoesModule } from './infracoes/infracoes.module';
 import 'dotenv/config';
 
 @Module({
@@ -20,6 +21,7 @@ import 'dotenv/config';
     AmbulanteModule,
     EventoModule,
     DenunciaModule,
+    InfracoesModule,
   ],
   controllers: [],
   providers: [

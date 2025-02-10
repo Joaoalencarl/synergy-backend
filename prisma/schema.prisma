@@ -34,6 +34,7 @@ model Usuario {
   passwordResetTokenExpires DateTime?
   ambulante                 Ambulante[]
   Denuncias                 Denuncias[]
+  Infracoes                 Infracao[]
   InscricoesDeEventos       InscricoesDeEventos[]
 }
 
@@ -48,6 +49,7 @@ model Admin {
   token_verificacao     String?
   verificado            StatusDeVerificacao
   ComentarioDeDenuncias ComentarioDeDenuncias[]
+  Infracoes             Infracao[]
   Permissoes            Permissoes[]
 }
 
@@ -124,6 +126,30 @@ model InscricoesDeEventos {
   status            StatusDeVerificacao
   evento            Evento              @relation(fields: [evento_id], references: [id], onDelete: Cascade)
   usuario           Usuario             @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+}
+
+model Infracao {
+  id                   String   @id @unique
+  administrador_id     String
+  usuario_id           String
+  descricao            String
+  latitude             Float
+  longitude            Float
+  bairro               String
+  ponto_de_referencia  String
+  observacoes          String
+  multa                Float
+  prazo                DateTime
+  assinatura           String
+  status               Int
+  imagens              String[]
+  providencias         String
+  assinatura_digitital String
+  createdAt            DateTime @default(now())
+  tipo_da_infracao     Int[]
+  id_tipo_providencia  Int[]
+  admintrador          Admin    @relation(fields: [administrador_id], references: [id])
+  usuario              Usuario  @relation(fields: [usuario_id], references: [id])
 }
 
 enum TipoDeUsuario {
