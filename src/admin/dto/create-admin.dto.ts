@@ -40,6 +40,9 @@ export class CreateAdminDto {
   @IsNotEmpty({ message: 'A senha não pode ser vazia' })
   senha: string;
 
+  @IsOptional({})
+  foto_url: string;
+
   @IsIn(['SUPER_ADMIN', 'GESTOR', 'FISCAL'], {
     message: 'O tipo de administrador informado é inválido',
   })

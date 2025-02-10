@@ -23,7 +23,7 @@ export class DenunciaService {
 
       return {
         mensagem: 'Denúncia criada com sucesso',
-        status: 'success',
+        success: true,
         ...createdDenuncia,
       };
     } else {
@@ -39,7 +39,7 @@ export class DenunciaService {
 
       return {
         mensagem: 'Denúncia criada com sucesso',
-        status: 'success',
+        success: true,
         ...createdDenuncia,
       };
     }
@@ -52,7 +52,7 @@ export class DenunciaService {
       });
       return {
         mensagem: ' Denúncias encontradas com sucesso',
-        status: 'success',
+        success: true,
         result,
       };
     }
@@ -63,7 +63,7 @@ export class DenunciaService {
 
     return {
       mensagem: 'Denúncia encontrada com sucesso',
-      status: 'success',
+      success: true,
       result,
     };
   }
@@ -75,7 +75,7 @@ export class DenunciaService {
 
     return {
       mensagem: 'Denúncia deletada com sucesso',
-      status: 'success',
+      success: true,
       ...denuncia_deletada,
     };
   }
@@ -84,7 +84,6 @@ export class DenunciaService {
     if (!comentario || !id || !admin_id) {
       return {
         mensagem: 'Informe o comentário, id da denúncia e id do fiscal',
-        status: 'success',
       };
     }
 
@@ -106,7 +105,7 @@ export class DenunciaService {
 
     return {
       mensagem: 'Comentário adicionado com sucesso',
-      status: 'success',
+      success: true,
       comentario_criado,
     };
   }

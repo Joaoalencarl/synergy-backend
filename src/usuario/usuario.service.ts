@@ -58,6 +58,7 @@ export class UserService {
 
     return {
       message: 'Usuário atualizado com sucesso',
+      success: true,
       updatedUser,
     };
   }

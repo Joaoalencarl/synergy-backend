@@ -61,7 +61,7 @@ export class AuthService {
       console.log(isPasswordValid);
       if (isPasswordValid) {
         return {
-          status: 'success',
+          success: true,
           ...user,
           senha: undefined,
         };

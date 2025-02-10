@@ -28,6 +28,7 @@ export class EventoService {
 
     return {
       message: 'Evento criado com sucesso',
+      success: true,
       ...createdEvento,
     };
   }
@@ -49,7 +50,7 @@ export class EventoService {
 
     return {
       message: 'Eventos encontrados com sucesso',
-      status: 'success',
+      success: true,
       eventos,
     };
   }
@@ -76,7 +77,7 @@ export class EventoService {
 
     return {
       message: 'Evento atualizado com sucesso',
-      status: 'success',
+      success: true,
       ...updatedEvento,
     };
   }
@@ -135,7 +136,7 @@ export class EventoService {
 
     return {
       message: 'Inscrição realizada com sucesso',
-      status: 'success',
+      success: true,
       ...inscricaoCriada,
     };
   }

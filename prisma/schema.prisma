@@ -43,6 +43,7 @@ model Admin {
   nome                  String
   email                 String                  @unique
   senha                 String
+  foto_url              String?
   adminType             AdminType
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
@@ -133,8 +134,6 @@ model Infracao {
   administrador_id     String
   usuario_id           String
   descricao            String
-  latitude             Float
-  longitude            Float
   bairro               String
   ponto_de_referencia  String
   observacoes          String
@@ -148,6 +147,8 @@ model Infracao {
   createdAt            DateTime @default(now())
   tipo_da_infracao     Int[]
   id_tipo_providencia  Int[]
+  latitude             Float
+  longitude            Float
   admintrador          Admin    @relation(fields: [administrador_id], references: [id])
   usuario              Usuario  @relation(fields: [usuario_id], references: [id])
 }

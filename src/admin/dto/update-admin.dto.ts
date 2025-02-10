@@ -36,6 +36,9 @@ export class UpdateAdminDto {
   @IsOptional()
   senha?: string;
 
+  @IsOptional()
+  foto_url?: string;
+
   @IsIn(['SUPER_ADMIN', 'GESTOR', 'FISCAL'], {
     message: 'O tipo de administrador informado é inválido',
   })
@@ -43,5 +46,5 @@ export class UpdateAdminDto {
   adminType?: AdminType;
 
   @IsOptional({ message: 'O status de verificação informado é inválido' })
-  verificado?: StatusDeVerificacao = StatusDeVerificacao.PENDENTE;
+  verificado?: StatusDeVerificacao;
 }

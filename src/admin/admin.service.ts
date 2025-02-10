@@ -53,7 +53,7 @@ export class AdminService {
 
     return {
       message: 'Admin criado com sucesso',
-      status: 'success',
+      success: true,
       ...createdAdmin,
       senha: undefined,
       token_verificacao: undefined,
@@ -63,6 +63,7 @@ export class AdminService {
   async updateAdmin(updateAdminDto: UpdateAdminDto, id: string) {
     const data: Prisma.AdminUpdateInput = {
       ...updateAdminDto,
+      senha: await bcrypt.hash(updateAdminDto.senha, 10),
     };
 
     const updatedAdmin = await this.prisma.admin.update({
@@ -72,7 +73,7 @@ export class AdminService {
 
     return {
       message: 'Admin atualizado com sucesso',
-      status: 'success',
+      success: true,
       ...updatedAdmin,
       senha: undefined,
       token_verificacao: undefined,
@@ -134,7 +135,7 @@ export class AdminService {
 
     return {
       message: 'Status do ambulante alterado com sucesso',
-      status: 'success',
+      success: true,
       ...data,
     };
   }
@@ -153,7 +154,7 @@ export class AdminService {
 
     return {
       message: 'Admin encontrado com sucesso',
-      status: 'success',
+      success: true,
       ...admin,
       senha: undefined,
       token_verificacao: undefined,

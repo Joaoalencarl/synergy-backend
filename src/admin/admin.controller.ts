@@ -120,7 +120,7 @@ export class AdminController {
   @HttpCode(HttpStatus.OK)
   @Get()
   async findAdmin(@Query('search') search: string) {
-    return this.adminService.findByEmail(search);
+    return this.adminService.findAdmin(search);
   }
   /* --> Para buscar um administrador, basta passar o termo de busca.
 
