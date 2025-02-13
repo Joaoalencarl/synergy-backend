@@ -68,7 +68,7 @@ export class AuthService {
       }
     }
 
-    throw new UnauthorizedError('Enderesso de e-mail ou senha inválidos.');
+    throw new UnauthorizedError('Endereço de e-mail ou senha inválidos.');
   }
 
   async validateAdmin(email: string, password: string): Promise<any> {
@@ -90,7 +90,7 @@ export class AuthService {
       };
     }
 
-    throw new UnauthorizedError('Enderesso de e-mail ou senha inválidos.');
+    throw new UnauthorizedError('Endereço de e-mail ou senha inválidos.');
   }
 
   async requestPasswordReset(email: string) {

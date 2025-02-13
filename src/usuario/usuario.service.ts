@@ -73,6 +73,9 @@ export class UserService {
           { cpf: { contains: search } },
         ],
       },
+      include: {
+        ambulante: true,
+      },
     });
 
     if (users.length === 0) {
