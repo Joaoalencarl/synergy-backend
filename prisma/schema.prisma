@@ -52,6 +52,8 @@ model Admin {
   ComentarioDeDenuncias ComentarioDeDenuncias[]
   Infracoes             Infracao[]
   Permissoes            Permissoes[]
+  Chat                  Chat?                   @relation(fields: [chatId], references: [id])
+  chatId                String?
 }
 
 model Permissoes {
@@ -151,6 +153,26 @@ model Infracao {
   longitude            Float
   admintrador          Admin    @relation(fields: [administrador_id], references: [id])
   usuario              Usuario  @relation(fields: [usuario_id], references: [id])
+}
+
+model Chat {
+  id        String    @id @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  title     String?
+  mensagens Message[]
+  admins    Admin[]
+}
+
+model Message {
+  id         String   @id @unique
+  createdBy  String
+  chatId     String
+  text       String
+  attachment String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  chat       Chat     @relation(fields: [chatId], references: [id])
 }
 
 enum TipoDeUsuario {

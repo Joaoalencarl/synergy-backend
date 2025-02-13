@@ -14,13 +14,15 @@ import { CreateAdminDto } from './dto/create-admin.dto';
 import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { StatusDeVerificacao } from '@prisma/client';
+import { AdminTypes } from './decorator/admin-type.decorator';
 
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @HttpCode(HttpStatus.OK)
-  @Post()
+  @Post('/:id')
+  // @AdminTypes('SUPER_ADMIN')
   async createAdmin(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.createAdmin(createAdminDto);
   }
@@ -49,7 +51,8 @@ export class AdminController {
   */
 
   @HttpCode(HttpStatus.OK)
-  @Patch()
+  @Patch('/:id')
+  // AdminTypes('SUPER_ADMIN', 'GESTOR', 'FISCAL')
   async updateAdmin(
     @Body() updateAdminDto: UpdateAdminDto,
     @Query('id') id: string,
@@ -68,8 +71,9 @@ export class AdminController {
   */
 
   @HttpCode(HttpStatus.OK)
-  @Delete()
-  async deleteAdmin(@Query('id') id: string) {
+  @Delete('/:id')
+  //@AdminTypes('SUPER_ADMIN')
+  async deleteAdmin(@Query('deleted-user-id') id: string) {
     return this.adminService.deleteAdmin(id);
   }
   /* --> Para deletar um administrador, basta passar o id do administrador.
@@ -95,7 +99,8 @@ export class AdminController {
     */
 
   @HttpCode(HttpStatus.OK)
-  @Patch('requisicao-de-ambulante:admin_id')
+  @Patch('/:id/requisicao-de-ambulante')
+  // @AdminTypes('SUPER_ADMIN', 'GESTOR')
   async requisicaoDeAmbulante(
     @Query('ambulante_id') ambulante_id: string,
     @Query('admin_id') admin_id: string,
@@ -119,6 +124,7 @@ export class AdminController {
 
   @HttpCode(HttpStatus.OK)
   @Get()
+  // @AdminTypes('SUPER_ADMIN')
   async findAdmin(@Query('search') search: string) {
     return this.adminService.findAdmin(search);
   }

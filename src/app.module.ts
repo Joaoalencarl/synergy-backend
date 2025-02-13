@@ -10,6 +10,7 @@ import { AmbulanteModule } from './ambulante/ambulante.module';
 import { EventoModule } from './evento/evento.module';
 import { DenunciaModule } from './denuncia/denuncia.module';
 import { InfracoesModule } from './infracoes/infracoes.module';
+import { ChatModule } from './chat/chat.module';
 import 'dotenv/config';
 
 @Module({
@@ -22,6 +23,7 @@ import 'dotenv/config';
     EventoModule,
     DenunciaModule,
     InfracoesModule,
+    ChatModule,
   ],
   controllers: [],
   providers: [
