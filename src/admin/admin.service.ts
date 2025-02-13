@@ -61,10 +61,19 @@ export class AdminService {
   }
 
   async updateAdmin(updateAdminDto: UpdateAdminDto, id: string) {
+    const admin = await this.prisma.admin.findUnique({ where: { id } });
+
+    if (!admin) {
+      throw new NotFoundException('Admin não encontrado');
+    }
+
     const data: Prisma.AdminUpdateInput = {
       ...updateAdminDto,
-      senha: await bcrypt.hash(updateAdminDto.senha, 10),
     };
+
+    if (updateAdminDto.senha) {
+      data.senha = await bcrypt.hash(updateAdminDto.senha, 10);
+    }
 
     const updatedAdmin = await this.prisma.admin.update({
       where: { id },

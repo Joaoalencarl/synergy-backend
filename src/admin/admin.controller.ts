@@ -51,7 +51,7 @@ export class AdminController {
   */
 
   @HttpCode(HttpStatus.OK)
-  @Patch('/:id')
+  @Patch()
   // AdminTypes('SUPER_ADMIN', 'GESTOR', 'FISCAL')
   async updateAdmin(
     @Body() updateAdminDto: UpdateAdminDto,
