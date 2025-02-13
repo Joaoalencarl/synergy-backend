@@ -14,7 +14,7 @@ import { CreateAdminDto } from './dto/create-admin.dto';
 import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { StatusDeVerificacao } from '@prisma/client';
-import { AdminTypes } from './decorator/admin-type.decorator';
+// import { AdminTypes } from './decorator/admin-type.decorator';
 
 @Controller('admin')
 export class AdminController {
@@ -71,7 +71,7 @@ export class AdminController {
   */
 
   @HttpCode(HttpStatus.OK)
-  @Delete('/:id')
+  @Delete()
   //@AdminTypes('SUPER_ADMIN')
   async deleteAdmin(@Query('deleted-user-id') id: string) {
     return this.adminService.deleteAdmin(id);

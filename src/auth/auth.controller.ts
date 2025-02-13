@@ -51,6 +51,7 @@ export class AuthController {
 }'
   */
 
+  @IsPublic()
   @Post('request-password-reset')
   async requestPasswordReset(@Body('email') email: string) {
     return this.authService.requestPasswordReset(email);
@@ -64,6 +65,7 @@ export class AuthController {
   }'
   */
 
+  @IsPublic()
   @Post('reset-password')
   async resetPassword(
     @Query('token') token: string,
