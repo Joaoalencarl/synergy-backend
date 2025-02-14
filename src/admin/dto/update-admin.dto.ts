@@ -5,8 +5,10 @@ import {
   IsOptional,
   IsString,
   IsStrongPassword,
+  ValidateNested,
 } from 'class-validator';
-
+import { Type } from 'class-transformer';
+import { UpdatePermissoesDto } from './update-permissoes.dto';
 export class UpdateAdminDto {
   @IsString({ message: 'O nome informado é inválido' })
   @IsOptional()
@@ -47,4 +49,9 @@ export class UpdateAdminDto {
 
   @IsOptional({ message: 'O status de verificação informado é inválido' })
   verificado?: StatusDeVerificacao;
+
+  @ValidateNested()
+  @Type(() => UpdatePermissoesDto)
+  @IsOptional()
+  Permissoes?: UpdatePermissoesDto;
 }

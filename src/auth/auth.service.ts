@@ -16,6 +16,7 @@ import { AdminService } from 'src/admin/admin.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EmailService } from 'src/email/email.service';
 import { generateUniqueCustomId } from 'src/config/generate-custom-id.config';
+import emailDeRecuperacaoHtml from 'src/email/email-de-recuperacao';
 @Injectable()
 export class AuthService {
   constructor(
@@ -115,13 +116,13 @@ export class AuthService {
     });
 
     const resetLink = `${process.env.URL}/auth/reset-password?token=${token}`;
-    await this.emailService.sendMail(
-      email,
-      'Recuperação de Senha',
-      `Clique no link para redefinir sua senha: ${resetLink}`,
-    );
+    const emailHtml = emailDeRecuperacaoHtml(resetLink);
+    await this.emailService.sendMail(email, 'Recuperação de Senha', emailHtml);
 
-    return { message: 'E-mail de recuperação de senha enviado com sucesso' };
+    return {
+      message: 'E-mail de recuperação de senha enviado com sucesso',
+      success: true,
+    };
   }
 
   async resetPassword(token: string, newPassword: string) {
@@ -149,6 +150,6 @@ export class AuthService {
       },
     });
 
-    return { message: 'Senha redefinida com sucesso', status: 'success' };
+    return { message: 'Senha redefinida com sucesso', sucess: true };
   }
 }

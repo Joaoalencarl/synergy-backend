@@ -9,6 +9,7 @@ import { EmailService } from 'src/email/email.service';
 import { UserMiddleware } from './middleware/user.middleware';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { generateUniqueCustomId } from 'src/config/generate-custom-id.config';
+import emailDeVerificacaoHtml from 'src/email/email-de-verificacao';
 
 @Injectable()
 export class UserService {
@@ -32,10 +33,11 @@ export class UserService {
     const createdUser = await this.prisma.usuario.create({ data });
 
     const confirmationLink = `${process.env.URL}/user/confirmar-email?token=${tokenDeVerificacao}`;
+    const emailHtml = emailDeVerificacaoHtml(confirmationLink);
     await this.emailService.sendMail(
       criarUsuarioDto.email,
       'Confirme seu e-mail',
-      `Clique no link para confirmar seu e-mail: ${confirmationLink}`,
+      emailHtml,
     );
 
     return {
