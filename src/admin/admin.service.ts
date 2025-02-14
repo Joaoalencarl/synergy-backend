@@ -36,7 +36,7 @@ export class AdminService {
       token_verificacao: tokenDeVerificacao,
       Permissoes: {
         create: {
-          id: uuidv4(),
+          id: id,
           ...permissoes,
         },
       },
@@ -67,17 +67,36 @@ export class AdminService {
       throw new NotFoundException('Admin não encontrado');
     }
 
-    const data: Prisma.AdminUpdateInput = {
+    const adminData: Prisma.AdminUpdateInput = {
       ...updateAdminDto,
+      senha: updateAdminDto.senha
+        ? await bcrypt.hash(updateAdminDto.senha, 10)
+        : undefined,
+      Permissoes: updateAdminDto.Permissoes
+        ? {
+            update: {
+              where: { id: id },
+              data: {
+                criacao_de_usuario:
+                  updateAdminDto.Permissoes.criacao_de_usuario,
+                distribuicao_de_tarefas:
+                  updateAdminDto.Permissoes.distribuicao_de_tarefas,
+                requisicoes: updateAdminDto.Permissoes.requisicoes,
+                denuncias: updateAdminDto.Permissoes.denuncias,
+                infracoes: updateAdminDto.Permissoes.infracoes,
+                eventos: updateAdminDto.Permissoes.eventos,
+                relatorios_estrategicos:
+                  updateAdminDto.Permissoes.relatorios_estrategicos,
+              },
+            },
+          }
+        : undefined,
     };
-
-    if (updateAdminDto.senha) {
-      data.senha = await bcrypt.hash(updateAdminDto.senha, 10);
-    }
 
     const updatedAdmin = await this.prisma.admin.update({
       where: { id },
-      data,
+      data: adminData,
+      include: { Permissoes: true },
     });
 
     return {
