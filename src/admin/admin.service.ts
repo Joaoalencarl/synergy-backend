@@ -7,6 +7,7 @@ import { Prisma, StatusDeVerificacao } from '@prisma/client';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import * as bcrypt from 'bcrypt';
 import { generateUniqueCustomId } from 'src/config/generate-custom-id.config';
+import generateEmailHtml from 'src/email/email-de-verificacao';
 
 @Injectable()
 export class AdminService {
@@ -41,15 +42,17 @@ export class AdminService {
         },
       },
     };
-
     const createdAdmin = await this.prisma.admin.create({ data });
 
-    const confirmationLink = `${process.env.URL}/admin/confirmar-email?token=${tokenDeVerificacao}`;
-    await this.emailService.sendMail(
-      createAdminDto.email,
-      'Confirme seu e-mail',
-      `Clique no link para confirmar seu e-mail: ${confirmationLink}`,
-    );
+    if (data.verificado !== 'APROVADO') {
+      const confirmationLink = `${process.env.URL}/admin/confirmar-email?token=${tokenDeVerificacao}`;
+      const emailHtml = generateEmailHtml(confirmationLink);
+      await this.emailService.sendMail(
+        createAdminDto.email,
+        'Confirme seu e-mail',
+        emailHtml,
+      );
+    }
 
     return {
       message: 'Admin criado com sucesso',
@@ -169,7 +172,22 @@ export class AdminService {
   }
 
   async findAdmin(search: string) {
-    const admin = await this.prisma.admin.findFirst({
+    //quando não tiver nada no search, retornar todos os admins
+    if (search === '') {
+      const admins = await this.prisma.admin.findMany({
+        include: { Permissoes: true },
+      });
+
+      return {
+        message: 'Admins encontrados com sucesso',
+        success: true,
+        ...admins,
+        senha: undefined,
+        token_verificacao: undefined,
+      };
+    }
+
+    const admin = await this.prisma.admin.findMany({
       where: {
         OR: [{ id: { contains: search } }, { email: { contains: search } }],
       },

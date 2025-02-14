@@ -21,7 +21,7 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @HttpCode(HttpStatus.OK)
-  @Post('/:id')
+  @Post()
   // @AdminTypes('SUPER_ADMIN')
   async createAdmin(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.createAdmin(createAdminDto);
