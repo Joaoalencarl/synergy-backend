@@ -1,12 +1,10 @@
 import { IsNotEmpty, IsOptional } from 'class-validator';
 
-export class CreateMessagetDto {
+export class MarkAsReadDto {
   @IsNotEmpty()
-  sender_id: string;
-
+  message_id: string;
   @IsNotEmpty()
-  text: string;
-
+  admin_id: string;
   @IsOptional()
-  attachment: string;
+  read_at: Date;
 }
