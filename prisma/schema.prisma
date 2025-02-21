@@ -54,6 +54,8 @@ model Admin {
   Permissoes            Permissoes[]
   Chat                  Chat?                   @relation(fields: [chatId], references: [id])
   chatId                String?
+  Message               Message[]
+  ReadFor               ReadFor[]
 }
 
 model Permissoes {
@@ -82,7 +84,7 @@ model Ambulante {
   documentacao            String[]
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
-  usuario                 Usuario?            @relation(fields: [usuario_id], references: [id])
+  usuario                 Usuario?            @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 }
 
 model Denuncias {
@@ -96,7 +98,7 @@ model Denuncias {
   createdAt               DateTime                @default(now())
   updatedAt               DateTime                @updatedAt
   comentarios_de_denuncia ComentarioDeDenuncias[]
-  usuario                 Usuario?                @relation(fields: [usuario_id], references: [id])
+  usuario                 Usuario?                @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 }
 
 model ComentarioDeDenuncias {
@@ -105,7 +107,7 @@ model ComentarioDeDenuncias {
   fiscal_id   String
   descricao   String
   denuncia    Denuncias @relation(fields: [denuncia_id], references: [id], onDelete: Cascade)
-  fiscal      Admin     @relation(fields: [fiscal_id], references: [id])
+  fiscal      Admin     @relation(fields: [fiscal_id], references: [id], onDelete: Cascade)
 }
 
 model Evento {
@@ -151,8 +153,8 @@ model Infracao {
   id_tipo_providencia  Int[]
   latitude             Float
   longitude            Float
-  admintrador          Admin    @relation(fields: [administrador_id], references: [id])
-  usuario              Usuario  @relation(fields: [usuario_id], references: [id])
+  admintrador          Admin    @relation(fields: [administrador_id], references: [id], onDelete: Cascade)
+  usuario              Usuario  @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 }
 
 model Chat {
@@ -165,14 +167,26 @@ model Chat {
 }
 
 model Message {
-  id         String   @id @unique
-  createdBy  String
+  id         String    @id @unique
   chatId     String
+  adminId    String
   text       String
   attachment String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  chat       Chat     @relation(fields: [chatId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  chat       Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  admin      Admin     @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  ReadFor    ReadFor[]
+}
+
+model ReadFor {
+  id        String   @unique @id
+  messageId String
+  adminId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
 }
 
 enum TipoDeUsuario {
