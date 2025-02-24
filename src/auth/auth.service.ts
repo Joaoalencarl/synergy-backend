@@ -115,7 +115,7 @@ export class AuthService {
       },
     });
 
-    const resetLink = `${process.env.URL}/auth/reset-password?token=${token}`;
+    const resetLink = `https://ambulante.synergytecnologia.com.br/auth/reset-password?token=${token}`;
     const emailHtml = emailDeRecuperacaoHtml(resetLink);
     await this.emailService.sendMail(email, 'Recuperação de Senha', emailHtml);
 

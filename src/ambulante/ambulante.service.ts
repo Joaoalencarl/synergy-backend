@@ -64,16 +64,23 @@ export class AmbulanteService {
     };
   }
 
-  async remove(id: string, usuario_id: string) {
-    await this.userMiddleware.userExists(usuario_id);
-    const data = this.prisma.ambulante.delete({ where: { id } });
-    if (!data) return 'Nenhum ambulante encontrado';
-    else {
-      return {
-        message: 'Ambulante deletado com sucesso',
-        success: true,
-        data,
-      };
+  async remove(usuario_id: string) {
+    // caso o ambulante exista, ele será removido
+    const ambulante = await this.prisma.ambulante.findUnique({
+      where: { id: usuario_id },
+    });
+
+    if (!ambulante) {
+      return { message: 'Ambulante não encontrado', success: false };
     }
+
+    await this.prisma.ambulante.delete({
+      where: { id: usuario_id },
+    });
+
+    return {
+      message: 'Ambulante removido com sucesso',
+      success: true,
+    };
   }
 }

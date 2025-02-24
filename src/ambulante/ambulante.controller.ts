@@ -72,12 +72,12 @@ export class AmbulanteController {
   }'
   */
 
-  @Delete(':id')
-  remove(@Param('id') id: string, @Query('usuario_id') usuario_id: string) {
-    return this.ambulanteService.remove(id, usuario_id);
+  @Delete()
+  remove(@Query('ambulante_id') ambulante_id: string) {
+    return this.ambulanteService.remove(ambulante_id);
   }
   /* --> Deletar um ambulante exige o id do ambulante e o id do usuário.
-    curl --location 'http://{{host}}/ambulante/{{ambulante_id}}?usuario_id={{usuario_id}}' \
+    curl --location 'http://{{host}}/ambulante?{{ambulante_id}}' \
   --header 'Content-Type: application/json' \
   --header 'Authorization Bearer {{BearerToken}}'
   */
