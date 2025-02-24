@@ -7,7 +7,7 @@ export class CreateAmbulanteDto {
 
   @IsString({ message: 'O nome do negócio deve ser uma string' })
   @IsNotEmpty({ message: 'O nome do negócio não pode ser vazio' })
-  nome_do_negoocio: string;
+  nome_do_negocio: string;
 
   @IsString({ message: 'O tipo do negócio deve ser uma string' })
   @IsNotEmpty({ message: 'O tipo do negócio não pode ser vazio' })
