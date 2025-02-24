@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class MarkAsReadDto {
   @IsNotEmpty()
@@ -6,5 +6,6 @@ export class MarkAsReadDto {
   @IsNotEmpty()
   admin_id: string;
   @IsOptional()
-  read_at: Date;
+  @IsDateString()
+  read_at?: string;
 }
