@@ -62,11 +62,14 @@ export class UserController {
   */
 
   @Get()
-  async getUser(@Query('search') search: string) {
-    return this.userService.getUser(search);
+  async getUser(
+    @Query('search') search: string,
+    @Query('filter') filter: string,
+  ) {
+    return this.userService.getUser(search, filter);
   }
   /* --> Para buscar um ou mais usuários, basta passar o nome, email ou cpf.
-    curl --location 'http://{{host}}/user?search={{nome, email, cpf ou id}}' \
+    curl --location 'http://{{host}}/user?search={{nome, email, cpf ou id}}&filter={{ALL, APROVADO, PENDENTE ou REPROVADO}}' \
   --header 'Authorization: Bearer {{BearerToken}}' \
  */
 

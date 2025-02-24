@@ -65,7 +65,8 @@ export class UserService {
     };
   }
 
-  async getUser(search: string) {
+  async getUser(search: string, filter: string) {
+    /*
     const users = await this.prisma.usuario.findMany({
       where: {
         OR: [
@@ -95,6 +96,71 @@ export class UserService {
         };
       }),
     };
+    Preciso filtrar resultados. Nessa rota seria possível adicionar filtro para exibir apenas usuários com requisições de ambulante? podendo assumir os seguintes valores: 
+
+ALL // para mostrar todas
+APROVADA // apenas usuários com requisições aprovadas
+PENDENTE // apenas usuários com requisições pendentes REJEITADA // apenas usuários com requisições rejeitadas
+
+Lembrando que essa também é uma rota que sofrerá mudanças com as alterações na tabela de ambulante
+
+    */
+    const user = await this.prisma.usuario.findMany({
+      where: {
+        OR: [
+          { id: { contains: search } },
+          { nome: { contains: search } },
+          { email: { contains: search } },
+          { cpf: { contains: search } },
+        ],
+      },
+      include: {
+        ambulante: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(
+        `Nenhum usuário encontrado com o termo de busca: ${search}`,
+      );
+    }
+
+    if (filter === 'ALL') {
+      return {
+        message: 'pesquisa realizada com sucesso',
+        sucsses: true,
+        users: user.map((user) => {
+          return {
+            ...user,
+            senha: undefined,
+          };
+        }),
+      };
+    } else if (filter === 'APROVADA') {
+      return {
+        message: 'pesquisa realizada com sucesso',
+        sucsses: true,
+        users: user.filter((user) => user.verificado === 'APROVADO'),
+      };
+    } else if (filter === 'PENDENTE') {
+      return {
+        message: 'pesquisa realizada com sucesso',
+        sucsses: true,
+        users: user.filter((user) => user.verificado === 'PENDENTE'),
+      };
+    } else if (filter === 'REJEITADA') {
+      return {
+        message: 'pesquisa realizada com sucesso',
+        sucsses: true,
+        users: user.filter((user) => user.verificado === 'REPROVADO'),
+      };
+    } else {
+      return {
+        success: false,
+        message:
+          'Filtro inválido, utilize: ALL, APROVADO, PENDENTE ou REPROVADO',
+      };
+    }
   }
 
   async deleteUser(id: string) {
