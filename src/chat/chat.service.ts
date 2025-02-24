@@ -32,194 +32,117 @@ export class ChatService {
   }
 
   async listMessages(last_message_id: string, limit: number) {
-    // se não for passado o last_message_id, mostrar a partir do primeiro
-    if (!last_message_id) {
-      const messages = await this.prisma.message.findMany({
-        take: limit,
-        include: {
-          admin: { select: { nome: true } },
-          ReadFor: { select: { adminId: true } },
-        },
-      });
-      return messages;
-    }
-    // se não for passado o limit, mostrar todas as mensagens
-    else if (!limit) {
-      const messages = await this.prisma.message.findMany({
-        where: { id: { gt: last_message_id } },
-        include: {
-          admin: { select: { nome: true } },
-          ReadFor: { select: { adminId: true } },
-        },
-      });
-      return messages;
-    }
-    // se não for passado o last_message_id e o limit, mostrar a partir do primeiro
-    else if (!last_message_id && !limit) {
-      const messages = await this.prisma.message.findMany({
-        include: {
-          admin: { select: { nome: true } },
-          ReadFor: { select: { adminId: true } },
-        },
-      });
-      return messages;
-    }
-    // se for passado o last_message_id e o limit, mostrar a partir do last_message_id
-    else if (last_message_id && limit) {
-      const messages = await this.prisma.message.findMany({
-        where: { id: { gt: last_message_id } },
-        take: limit,
-        include: {
-          admin: { select: { nome: true } },
-          ReadFor: { select: { adminId: true } },
-        },
-      });
-      return messages;
-    } else {
-      return { success: false, message: 'Erro ao buscar mensagens' };
-    }
-  }
-
-  async markAsRead(markAsReadDto: MarkAsReadDto) {
-    const read_id = await generateUniqueCustomId(12, this.prisma, 'read');
-    //validações de campos obrigatórios
-    if (!markAsReadDto.message_id || !markAsReadDto.admin_id) {
-      return {
-        success: false,
-        message: 'message_id e admin_id são obrigatórios',
-      };
-    } else if (
-      !(await this.prisma.message.findFirst({
-        where: { id: markAsReadDto.message_id },
-      }))
-    ) {
-      return {
-        success: false,
-        message: 'Mensagem não encontrada',
-      };
-    } else if (
-      !(await this.prisma.admin.findFirst({
-        where: { id: markAsReadDto.admin_id },
-      }))
-    ) {
-      return {
-        success: false,
-        message: 'Admin não encontrado',
-      };
-    }
-    //se o campo read_at for preenchido, marcar todas as mensagens até a data como lidas
-    if (markAsReadDto.read_at) {
-      const messages = await this.prisma.message.findMany({
-        where: { createdAt: { lte: markAsReadDto.read_at } },
-      });
-
-      const readForEntries = messages.map((message) => ({
-        id: read_id,
-        adminId: markAsReadDto.admin_id,
-        messageId: message.id,
-        readAt: new Date(),
-      }));
-
-      await this.prisma.readFor.createMany({
-        data: readForEntries,
-      });
-
-      return {
-        success: true,
-        id: markAsReadDto.message_id,
-        read_by: messages.map((m) => m.id),
-      };
-      //se o campo read_at não for preenchido, marcar a mensagem como lida
-    } else {
-      const readFor = await this.prisma.readFor.create({
-        data: {
-          id: read_id,
-          adminId: markAsReadDto.admin_id,
-          messageId: markAsReadDto.message_id,
-        },
-      });
-
-      return {
-        success: true,
-        id: markAsReadDto.message_id,
-        read_by: readFor.adminId,
-      };
-    }
-  }
-
-  async deleteMessage(deleteMessageDto: DeleteMessageDto) {
-    //validações de campos obrigatórios
-    if (!deleteMessageDto.admin_id) {
-      return {
-        success: false,
-        message: 'id_usuario é obrigatório',
-      };
-    } else if (
-      !(await this.prisma.admin.findFirst({
-        where: { id: deleteMessageDto.admin_id },
-      }))
-    ) {
-      return {
-        success: false,
-        message: 'Usuário não encontrado',
-      };
-    }
-    //se o campo data_excluir for preenchido, excluir todas as mensagens até a data
-    if (deleteMessageDto.deleted_at) {
-      await this.prisma.message.deleteMany({
-        where: { createdAt: { lte: deleteMessageDto.deleted_at } },
-      });
-
-      return {
-        success: true,
-      };
-      //se o campo data_excluir não for preenchido, excluir a mensagem
-    } else {
-      await this.prisma.message.delete({
-        where: {
-          id: deleteMessageDto.message_id,
-          adminId: deleteMessageDto.admin_id,
-        },
-      });
-
-      return {
-        success: true,
-      };
-    }
-  }
-
-  async getNotifications(admin_id: string) {
-    //validações de campos obrigatórios
-    if (!admin_id) {
-      return {
-        success: false,
-        message: 'id_usuario é obrigatório',
-      };
-    } else if (
-      !(await this.prisma.admin.findFirst({
-        where: { id: admin_id },
-      }))
-    ) {
-      return {
-        success: false,
-        message: 'Usuário não encontrado',
-      };
-    }
-    //buscar mensagens não lidas
-    const unreadMessages = await this.prisma.readFor.findMany({
-      where: { adminId: admin_id },
-      select: { messageId: true },
-    });
-
-    const lastMessage = await this.prisma.message.findFirst({
-      where: { createdAt: { gt: new Date() } },
-      include: { admin: { select: { nome: true } } },
+    const messages = await this.prisma.message.findMany({
+      // se não for passado o last_message_id, mostrar a partir do primeiro
+      where: last_message_id ? { id: { gt: last_message_id } } : {},
+      // se não for passado o limit, mostrar 20 mensagens
+      take: limit || 20,
+      include: { admin: true, ReadFor: true },
     });
 
     return {
       success: true,
-      nao_lidas: unreadMessages.length,
-      ultima_mensagem: lastMessage,
+      mensagens: messages.map((message) => ({
+        id_mensagem: message.id,
+        id_remetente: message.admin.id,
+        nome_remetente: message.admin.nome,
+        imagem_remetente: message.admin.foto_url,
+        mensagem: message.text,
+        data_envio: message.createdAt,
+        lido_por: message.ReadFor.map((read) => read.adminId),
+      })),
+    };
+  }
+
+  async markAsRead(markAsReadDto: MarkAsReadDto) {
+    // caso o campo data_leitura seja preenchido, marcar todas as mensagens até a data como lidas
+    if (markAsReadDto.read_at) {
+      const messages = await this.prisma.message.findMany({
+        where: { createdAt: { lte: new Date(markAsReadDto.read_at) } },
+      });
+
+      for (const message of messages) {
+        await this.prisma.readFor.create({
+          data: {
+            id: await generateUniqueCustomId(12, this.prisma, 'readFor'),
+            admin: { connect: { id: markAsReadDto.admin_id } },
+            message: { connect: { id: message.id } },
+            createdAt: new Date(),
+          },
+        });
+      }
+    } else {
+      // caso o campo data_leitura não seja preenchido, marcar a mensagem como lida
+      await this.prisma.readFor.create({
+        data: {
+          id: await generateUniqueCustomId(12, this.prisma, 'readFor'),
+          message: { connect: { id: markAsReadDto.message_id } },
+          admin: { connect: { id: markAsReadDto.admin_id } },
+          createdAt: new Date(),
+        },
+      });
+    }
+
+    return {
+      //retornar a ultima mensagem lida e quem leu
+      success: true,
+      id_mensagem: markAsReadDto.message_id,
+      lido_por: [markAsReadDto.admin_id],
+    };
+  }
+
+  async deleteMessage(deleteMessageDto: DeleteMessageDto) {
+    const autor = await this.prisma.admin.findUnique({
+      where: { id: deleteMessageDto.admin_id },
+      include: { Message: true },
+    });
+
+    // verificar se o usuário é o autor da mensagem
+    if (
+      autor &&
+      autor.Message.find(
+        (message) => message.id === deleteMessageDto.message_id,
+      )
+    ) {
+      // caso o campo data_excluir seja preenchido, apagar todas as mensagens até a data
+      if (deleteMessageDto.deleted_at) {
+        await this.prisma.message.deleteMany({
+          where: {
+            createdAt: { lte: new Date(deleteMessageDto.deleted_at) },
+          },
+        });
+        return { success: true };
+      } else {
+        // caso o campo data_excluir não seja preenchido, apagar a mensagem
+        await this.prisma.message.delete({
+          where: { id: deleteMessageDto.message_id },
+        });
+        return { success: true };
+      }
+    }
+    return { success: false };
+  }
+
+  async getNotifications(admin_id: string) {
+    const messages = await this.prisma.message.findMany({
+      where: {
+        NOT: {
+          ReadFor: { some: { adminId: admin_id } },
+        },
+      },
+      include: { admin: true },
+    });
+    return {
+      success: true,
+      nao_lidas: messages.length,
+      ultima_mensagem: messages[messages.length - 1]
+        ? {
+            id_mensagem: messages[messages.length - 1].id,
+            nome_remetente: messages[messages.length - 1].admin.nome,
+            mensagem: messages[messages.length - 1].text,
+            data_envio: messages[messages.length - 1].createdAt,
+          }
+        : null,
     };
   }
 }
