@@ -1,4 +1,4 @@
-import { IsString, IsArray, IsNotEmpty } from 'class-validator';
+import { IsString, IsArray, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateAmbulanteDto {
   @IsString({ message: 'A descrição deve ser uma string' })
@@ -28,4 +28,7 @@ export class CreateAmbulanteDto {
   @IsArray({ message: 'A documentação deve ser um array de strings' })
   @IsNotEmpty({ message: 'A documentação não pode ser vazia' })
   documentacao: string[];
+
+  @IsOptional()
+  observacoes?: string;
 }

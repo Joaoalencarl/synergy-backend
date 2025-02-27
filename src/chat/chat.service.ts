@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { generateUniqueCustomId } from 'src/config/generate-custom-id.config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateMessagetDto } from './dto/create-message';
 import { MarkAsReadDto } from './dto/mark-as-read.dto';
@@ -11,9 +10,7 @@ export class ChatService {
   constructor(private readonly prisma: PrismaService) {}
 
   async sendMessage(createMessageDto: CreateMessagetDto) {
-    const message_id = await generateUniqueCustomId(12, this.prisma, 'message');
     const data: Prisma.MessageCreateInput = {
-      id: message_id,
       text: createMessageDto.text,
       attachment: createMessageDto.attachment,
       chat: { connect: { id: 'MAINCHAT' } },
@@ -26,7 +23,6 @@ export class ChatService {
 
     return {
       success: true,
-      id: message_id,
       mensage: messageData,
     };
   }
@@ -64,7 +60,6 @@ export class ChatService {
       for (const message of messages) {
         await this.prisma.readFor.create({
           data: {
-            id: await generateUniqueCustomId(12, this.prisma, 'readFor'),
             admin: { connect: { id: markAsReadDto.admin_id } },
             message: { connect: { id: message.id } },
             createdAt: new Date(),
@@ -75,7 +70,6 @@ export class ChatService {
       // caso o campo data_leitura não seja preenchido, marcar a mensagem como lida
       await this.prisma.readFor.create({
         data: {
-          id: await generateUniqueCustomId(12, this.prisma, 'readFor'),
           message: { connect: { id: markAsReadDto.message_id } },
           admin: { connect: { id: markAsReadDto.admin_id } },
           createdAt: new Date(),

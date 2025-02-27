@@ -9,14 +9,22 @@ export class DenunciaService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createDenunciaDto: CreateDenunciaDto, usuario_id: string) {
-    const id = await generateUniqueCustomId(6, this.prisma, 'Denuncias');
+    const codigo_de_busca = await generateUniqueCustomId(
+      6,
+      this.prisma,
+      'Denuncias',
+    );
     if (!usuario_id) {
       const data: Prisma.DenunciasCreateInput = {
         ...createDenunciaDto,
-        id,
         //adicionar o usuário que fez a denúncia
         status: StatusDeDenuncia.RECEBIDA,
-        codigo_de_busca: id,
+        codigo_de_busca: codigo_de_busca,
+        localizacao: {
+          create: {
+            ...createDenunciaDto.localizacao,
+          },
+        },
       };
 
       const createdDenuncia = await this.prisma.denuncias.create({ data });
@@ -29,10 +37,14 @@ export class DenunciaService {
     } else {
       const data: Prisma.DenunciasCreateInput = {
         ...createDenunciaDto,
-        id,
         status: StatusDeDenuncia.RECEBIDA,
         usuario: { connect: { id: usuario_id } },
-        codigo_de_busca: id,
+        codigo_de_busca: codigo_de_busca,
+        localizacao: {
+          create: {
+            ...createDenunciaDto.localizacao,
+          },
+        },
       };
 
       const createdDenuncia = await this.prisma.denuncias.create({ data });

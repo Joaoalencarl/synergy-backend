@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateInfracoeDto } from './dto/create-infracoe.dto';
 import { UpdateInfracoeDto } from './dto/update-infracoe.dto';
 import { Prisma } from '@prisma/client';
-import { generateUniqueCustomId } from 'src/config/generate-custom-id.config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SearchInfracoesDto } from './dto/search-infracoes.dto';
 
@@ -10,14 +9,8 @@ import { SearchInfracoesDto } from './dto/search-infracoes.dto';
 export class InfracoesService {
   constructor(private readonly prisma: PrismaService) {}
   async create(createInfracoeDto: CreateInfracoeDto, admin_id: string) {
-    const infracao_id = await generateUniqueCustomId(
-      6,
-      this.prisma,
-      'infracao',
-    );
     const data: Prisma.InfracaoCreateInput = {
       ...createInfracoeDto,
-      id: infracao_id,
       admintrador: { connect: { id: admin_id } },
       usuario: { connect: { id: createInfracoeDto.usuario_id } },
     };
@@ -26,7 +19,6 @@ export class InfracoesService {
 
     return {
       success: true,
-      id_infracao: infracao_id,
     };
   }
 
@@ -92,39 +84,9 @@ export class InfracoesService {
   }
 
   async updateInfracoe(updateInfracoeDto: UpdateInfracoeDto) {
-    const {
-      id_infracao,
-      latitude,
-      longitude,
-      bairro,
-      ponto_de_referencia,
-      id_tipo_infracao,
-      imagens,
-      observacoes,
-      id_tipo_providencia,
-      multa,
-      prazo,
-      assinatura,
-      status,
-    } = updateInfracoeDto;
-
-    const data: Prisma.InfracaoUpdateInput = {
-      latitude: latitude ?? undefined,
-      longitude: longitude ?? undefined,
-      bairro: bairro ?? undefined,
-      ponto_de_referencia: ponto_de_referencia ?? undefined,
-      tipo_da_infracao: id_tipo_infracao ?? undefined,
-      imagens: imagens ?? undefined,
-      observacoes: observacoes ?? undefined,
-      id_tipo_providencia: id_tipo_providencia ?? undefined,
-      multa: multa === '' ? 0 : multa ? parseFloat(multa) : undefined,
-      prazo: prazo === '' ? '0000-00-00' : (prazo ?? undefined),
-      assinatura: assinatura ?? undefined,
-      status: status ?? undefined,
-    };
-
+    const data: Prisma.InfracaoUpdateInput = {};
     const updatedInfracao = await this.prisma.infracao.update({
-      where: { id: id_infracao },
+      where: { id: updateInfracoeDto.id },
       data,
     });
 

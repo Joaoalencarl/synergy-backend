@@ -11,6 +11,7 @@ import { EventoModule } from './evento/evento.module';
 import { DenunciaModule } from './denuncia/denuncia.module';
 import { InfracoesModule } from './infracoes/infracoes.module';
 import { ChatModule } from './chat/chat.module';
+import { RelatoriosEstrategicosModule } from './relatorios-estrategicos/relatorios-estrategicos.module';
 import 'dotenv/config';
 
 @Module({
@@ -24,6 +25,7 @@ import 'dotenv/config';
     DenunciaModule,
     InfracoesModule,
     ChatModule,
+    RelatoriosEstrategicosModule,
   ],
   controllers: [],
   providers: [
