@@ -50,7 +50,6 @@ export class AdminController {
 
   */
 
-  @HttpCode(HttpStatus.OK)
   @Patch()
   // AdminTypes('SUPER_ADMIN', 'GESTOR', 'FISCAL')
   async updateAdmin(
@@ -70,7 +69,6 @@ export class AdminController {
 
   */
 
-  @HttpCode(HttpStatus.OK)
   @Delete()
   //@AdminTypes('SUPER_ADMIN')
   async deleteAdmin(@Query('deleted-user-id') id: string) {
@@ -84,7 +82,6 @@ export class AdminController {
 
   */
 
-  @HttpCode(HttpStatus.OK)
   @IsPublic()
   @Get('confirmar-email')
   async confirmarEmail(@Query('token') token: string) {
@@ -98,8 +95,7 @@ export class AdminController {
       --data ''
     */
 
-  @HttpCode(HttpStatus.OK)
-  @Patch('/:id/requisicao-de-ambulante')
+  @Patch('requisicao-de-ambulante')
   // @AdminTypes('SUPER_ADMIN', 'GESTOR')
   async requisicaoDeAmbulante(
     @Query('ambulante_id') ambulante_id: string,
@@ -122,7 +118,6 @@ export class AdminController {
       }'
     */
 
-  @HttpCode(HttpStatus.OK)
   @Get()
   // @AdminTypes('SUPER_ADMIN')
   async findAdmin(@Query('search') search: string) {

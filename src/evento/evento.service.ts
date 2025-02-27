@@ -12,7 +12,6 @@ export class EventoService {
     if (!adminId) {
       return { error: 'AdminId precisa ser informado' };
     }
-    const id = await generateUniqueCustomId(6, this.prisma, 'evento');
     if (
       (await this.prisma.admin.findUnique({ where: { id: adminId } })) === null
     ) {
@@ -21,7 +20,11 @@ export class EventoService {
 
     const data: Prisma.EventoCreateInput = {
       ...createEventoDto,
-      id,
+      localizacao: {
+        create: {
+          ...createEventoDto.localizacao,
+        },
+      },
     };
 
     const createdEvento = await this.prisma.evento.create({ data });
@@ -38,7 +41,9 @@ export class EventoService {
       where: {
         OR: [
           { nome: { contains: search } },
-          { localizacao: { contains: search } },
+          { localizacao: { logradouro: { contains: search } } },
+          { localizacao: { cidade: { contains: search } } },
+          { localizacao: { estado: { contains: search } } },
           { data_de_inicio: { equals: new Date(search) } },
         ],
       },
@@ -68,6 +73,11 @@ export class EventoService {
 
     const data: Prisma.EventoUpdateInput = {
       ...updateEventoDto,
+      localizacao: {
+        update: {
+          ...updateEventoDto.localizacao,
+        },
+      },
     };
 
     const updatedEvento = this.prisma.evento.update({

@@ -3,12 +3,10 @@ import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { CriarUsuarioDto } from './dto/criar-usuario.dto';
-import { Usuario } from './entities/usuario.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { EmailService } from 'src/email/email.service';
 import { UserMiddleware } from './middleware/user.middleware';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { generateUniqueCustomId } from 'src/config/generate-custom-id.config';
 import emailDeVerificacaoHtml from 'src/email/email-de-verificacao';
 
 @Injectable()
@@ -19,14 +17,17 @@ export class UserService {
     private readonly userMiddleware: UserMiddleware,
   ) {}
 
-  async createUser(criarUsuarioDto: CriarUsuarioDto): Promise<Usuario> {
-    const id = await generateUniqueCustomId(6, this.prisma, 'usuario');
+  async createUser(criarUsuarioDto: CriarUsuarioDto): Promise<any> {
     const tokenDeVerificacao = uuidv4();
     const data: Prisma.UsuarioCreateInput = {
       ...criarUsuarioDto,
-      id,
       senha: await bcrypt.hash(criarUsuarioDto.senha, 10),
       token_verificacao: tokenDeVerificacao,
+      Localizacao: {
+        create: {
+          ...criarUsuarioDto.localizacao,
+        },
+      },
     };
 
     await this.userMiddleware.validateUser(data);
@@ -41,8 +42,8 @@ export class UserService {
     );
 
     return {
-      ...createdUser,
       senha: undefined,
+      ...createdUser,
     };
   }
 
@@ -66,45 +67,6 @@ export class UserService {
   }
 
   async getUser(search: string, filter: string) {
-    /*
-    const users = await this.prisma.usuario.findMany({
-      where: {
-        OR: [
-          { id: { contains: search } },
-          { nome: { contains: search } },
-          { email: { contains: search } },
-          { cpf: { contains: search } },
-        ],
-      },
-      include: {
-        ambulante: true,
-      },
-    });
-
-    if (users.length === 0) {
-      throw new NotFoundException(
-        `Nenhum usuário encontrado com o termo de busca: ${search}`,
-      );
-    }
-
-    return {
-      message: 'pesquisa realizada com sucesso',
-      users: users.map((user) => {
-        return {
-          ...user,
-          senha: undefined,
-        };
-      }),
-    };
-    Preciso filtrar resultados. Nessa rota seria possível adicionar filtro para exibir apenas usuários com requisições de ambulante? podendo assumir os seguintes valores: 
-
-ALL // para mostrar todas
-APROVADA // apenas usuários com requisições aprovadas
-PENDENTE // apenas usuários com requisições pendentes REJEITADA // apenas usuários com requisições rejeitadas
-
-Lembrando que essa também é uma rota que sofrerá mudanças com as alterações na tabela de ambulante
-
-    */
     const user = await this.prisma.usuario.findMany({
       where: {
         OR: [
@@ -115,7 +77,11 @@ Lembrando que essa também é uma rota que sofrerá mudanças com as alteraçõe
         ],
       },
       include: {
-        ambulante: true,
+        Ambulante: true,
+        Infracoes: true,
+        Localizacao: true,
+        Denuncias: true,
+        InscricoesDeEventos: true,
       },
     });
 

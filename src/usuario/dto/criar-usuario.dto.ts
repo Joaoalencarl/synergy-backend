@@ -11,6 +11,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsCPF } from 'src/decorator/cpf.decorator';
+import { CreateLocalizationDto } from 'src/denuncia/dto/create-denuncia.dto';
 
 export class CriarUsuarioDto {
   @IsString({ message: 'O nome informado é inválido' })
@@ -69,35 +70,6 @@ export class CriarUsuarioDto {
   @IsOptional()
   tipo: TipoDeUsuario;
 
-  @IsString({ message: 'O nome da rua informado é inválido' })
   @IsOptional()
-  logradouro: string;
-
-  @IsString({ message: 'O número informado é inválido' })
-  @IsOptional()
-  numero: string;
-
-  @IsString({ message: 'O complemento informado é inválido' })
-  @IsOptional()
-  complemento: string | null;
-
-  @IsString({ message: 'O bairro informado é inválido' })
-  @IsOptional()
-  bairro: string;
-
-  @IsString({ message: 'A cidade informada é inválida' })
-  @IsOptional()
-  cidade: string;
-
-  @IsString({ message: 'O estado informado é inválido' })
-  @IsOptional()
-  estado: string;
-
-  @IsString({ message: 'O CEP informado é inválido' })
-  @IsOptional()
-  cep: string;
-
-  @IsString({ message: 'A localização informada é inválida' })
-  @IsOptional()
-  localizacao: string; // GeoJSON Point (stringified)
+  localizacao: CreateLocalizationDto[]; // GeoJSON Point (stringified)
 }

@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Usuario {
-  id                        String                @id @unique
+  id                        String                @id @unique @default(uuid())
   nome                      String
   email                     String                @unique
   senha                     String
@@ -17,14 +17,6 @@ model Usuario {
   telefone                  String?
   foto_url                  String?
   descricao                 String?
-  logradouro                String?
-  numero                    String?
-  complemento               String?
-  bairro                    String?
-  cidade                    String?
-  estado                    String?
-  cep                       String?
-  localizacao               String?
   verificado                StatusDeVerificacao?
   tipo                      TipoDeUsuario
   createdAt                 DateTime              @default(now())
@@ -32,14 +24,15 @@ model Usuario {
   token_verificacao         String?
   passwordResetToken        String?
   passwordResetTokenExpires DateTime?
-  ambulante                 Ambulante[]
+  Localizacao               Localization[]
+  Ambulante                 Ambulante[]
   Denuncias                 Denuncias[]
   Infracoes                 Infracao[]
   InscricoesDeEventos       InscricoesDeEventos[]
 }
 
 model Admin {
-  id                    String                  @id @unique
+  id                    String                  @id @unique @default(uuid())
   nome                  String
   email                 String                  @unique
   senha                 String
@@ -56,10 +49,11 @@ model Admin {
   chatId                String?
   Message               Message[]
   ReadFor               ReadFor[]
+  ActivitieLogs         ActivitieLogs[]
 }
 
 model Permissoes {
-  id                      String  @id @unique
+  id                      String  @id @unique @default(uuid())
   adminId                 String
   criacao_de_usuario      Boolean
   distribuicao_de_tarefas Boolean
@@ -72,27 +66,29 @@ model Permissoes {
 }
 
 model Ambulante {
-  id                      String              @id @unique
-  usuario_id              String?
-  descricao               String
-  status                  StatusDeVerificacao
-  nome_do_negoocio        String
-  tipo_do_negocio         String
-  descricao_do_negocio    String
-  localizacao_do__negocio String
-  fotos_do_negocio        String[]
-  documentacao            String[]
-  createdAt               DateTime            @default(now())
-  updatedAt               DateTime            @updatedAt
-  usuario                 Usuario?            @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  id                   String              @id @unique @default(uuid())
+  usuario_id           String?
+  descricao            String
+  status               StatusDeVerificacao
+  nome_do_negoocio     String
+  tipo_do_negocio      String
+  descricao_do_negocio String
+  Localizacao          Localization[]
+  fotos_do_negocio     String[]
+  observacoes          String?
+  documentacao         String[]
+  analyzedAt           DateTime?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  usuario              Usuario?            @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 }
 
 model Denuncias {
-  id                      String                  @id @unique
+  id                      String                  @id @unique @default(uuid())
   usuario_id              String?
   descricao               String
   status                  StatusDeDenuncia
-  localizacao             String?
+  localizacao             Localization[]
   fotos                   String[]
   codigo_de_busca         String
   createdAt               DateTime                @default(now())
@@ -102,7 +98,7 @@ model Denuncias {
 }
 
 model ComentarioDeDenuncias {
-  id          String    @id @unique
+  id          String    @id @unique @default(uuid())
   denuncia_id String
   fiscal_id   String
   descricao   String
@@ -111,11 +107,12 @@ model ComentarioDeDenuncias {
 }
 
 model Evento {
-  id                  String                @id @unique
+  id                  String                @id @unique @default(uuid())
   nome                String
   data_de_inicio      DateTime
   data_de_fim         DateTime
-  localizacao         String
+  localizacao_id      String
+  localizacao         Localization          @relation(fields: [localizacao_id], references: [id], onDelete: Cascade)
   ativo               Boolean
   imagens             String[]
   descricao           String
@@ -124,7 +121,7 @@ model Evento {
 }
 
 model InscricoesDeEventos {
-  id                String              @id @unique
+  id                String              @id @unique @default(uuid())
   evento_id         String
   usuario_id        String
   data_de_inscricao DateTime            @default(now())
@@ -134,7 +131,7 @@ model InscricoesDeEventos {
 }
 
 model Infracao {
-  id                   String   @id @unique
+  id                   String         @id @unique @default(uuid())
   administrador_id     String
   usuario_id           String
   descricao            String
@@ -148,17 +145,16 @@ model Infracao {
   imagens              String[]
   providencias         String
   assinatura_digitital String
-  createdAt            DateTime @default(now())
+  createdAt            DateTime       @default(now())
   tipo_da_infracao     Int[]
   id_tipo_providencia  Int[]
-  latitude             Float
-  longitude            Float
-  admintrador          Admin    @relation(fields: [administrador_id], references: [id], onDelete: Cascade)
-  usuario              Usuario  @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  Localizacao          Localization[]
+  admintrador          Admin          @relation(fields: [administrador_id], references: [id], onDelete: Cascade)
+  usuario              Usuario        @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 }
 
 model Chat {
-  id        String    @id @unique
+  id        String    @id @unique @default(uuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   title     String?
@@ -167,7 +163,7 @@ model Chat {
 }
 
 model Message {
-  id         String    @id @unique
+  id         String    @id @unique @default(uuid())
   chatId     String
   adminId    String
   text       String
@@ -180,13 +176,49 @@ model Message {
 }
 
 model ReadFor {
-  id        String   @unique @id
+  id        String   @id @unique @default(uuid())
   messageId String
   adminId   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
   admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+}
+
+model Localization {
+  id          String     @id @unique @default(uuid())
+  latitude    Float?
+  longitude   Float?
+  logradouro  String?
+  numero      String?
+  complemento String?
+  bairro      String?
+  cidade      String?
+  estado      String?
+  cep         String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Usuario     Usuario?   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  usuarioId   String?
+  Ambulante   Ambulante? @relation(fields: [ambulanteId], references: [id], onDelete: Cascade)
+  ambulanteId String?
+  Denuncias   Denuncias? @relation(fields: [denunciasId], references: [id], onDelete: Cascade)
+  denunciasId String?
+  Evento      Evento[]
+  Infracao    Infracao?  @relation(fields: [infracaoId], references: [id], onDelete: Cascade)
+  infracaoId  String?
+}
+
+model ActivitieLogs {
+  id            String    @id @unique @default(uuid())
+  adminId       String
+  adminType     AdminType
+  action        String
+  affectedTable String?
+  affectedRecordId String?
+  affectedTime  DateTime  @default(now())
+  details       String?
+  admin         Admin     @relation(fields: [adminId], references: [id], onDelete: Cascade)
 }
 
 enum TipoDeUsuario {
