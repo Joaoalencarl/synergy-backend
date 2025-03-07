@@ -1,5 +1,5 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { HttpException, Injectable } from '@nestjs/common';
+import { Prisma, StatusDeVerificacao } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { CriarUsuarioDto } from './dto/criar-usuario.dto';
@@ -8,6 +8,19 @@ import { EmailService } from 'src/email/email.service';
 import { UserMiddleware } from './middleware/user.middleware';
 import { UpdateUserDto } from './dto/update-user.dto';
 import emailDeVerificacaoHtml from 'src/email/email-de-verificacao';
+
+function mapStringToStatusDeVerificacao(status: string): StatusDeVerificacao {
+  switch (status) {
+    case 'APROVADO':
+      return StatusDeVerificacao.APROVADO;
+    case 'PENDENTE':
+      return StatusDeVerificacao.PENDENTE;
+    case 'REJEITADO':
+      return StatusDeVerificacao.REPROVADO;
+    default:
+      return undefined;
+  }
+}
 
 @Injectable()
 export class UserService {
@@ -19,19 +32,17 @@ export class UserService {
 
   async createUser(criarUsuarioDto: CriarUsuarioDto): Promise<any> {
     const tokenDeVerificacao = uuidv4();
-    const data: Prisma.UsuarioCreateInput = {
-      ...criarUsuarioDto,
-      senha: await bcrypt.hash(criarUsuarioDto.senha, 10),
-      token_verificacao: tokenDeVerificacao,
-      Localizacao: {
-        create: {
-          ...criarUsuarioDto.localizacao,
+    const { localizacao, ...userData } = criarUsuarioDto;
+    const createdUser = await this.prisma.usuario.create({
+      data: {
+        ...userData,
+        senha: await bcrypt.hash(criarUsuarioDto.senha, 10),
+        token_verificacao: tokenDeVerificacao,
+        Localizacao: {
+          create: localizacao,
         },
       },
-    };
-
-    await this.userMiddleware.validateUser(data);
-    const createdUser = await this.prisma.usuario.create({ data });
+    });
 
     const confirmationLink = `${process.env.URL}/user/confirmar-email?token=${tokenDeVerificacao}`;
     const emailHtml = emailDeVerificacaoHtml(confirmationLink);
@@ -42,8 +53,8 @@ export class UserService {
     );
 
     return {
-      senha: undefined,
       ...createdUser,
+      senha: undefined,
     };
   }
 
@@ -67,68 +78,44 @@ export class UserService {
   }
 
   async getUser(search: string, filter: string) {
-    const user = await this.prisma.usuario.findMany({
-      where: {
-        OR: [
-          { id: { contains: search } },
-          { nome: { contains: search } },
-          { email: { contains: search } },
-          { cpf: { contains: search } },
-        ],
-      },
+    if (
+      filter &&
+      !['ALL', 'APROVADO', 'PENDENTE', 'REJEITADO'].includes(filter)
+    ) {
+      throw new HttpException('Filtro inválido', 400);
+    }
+
+    const statusFilter =
+      filter !== 'ALL' ? mapStringToStatusDeVerificacao(filter) : undefined;
+
+    const where: Prisma.UsuarioWhereInput = {
+      AND: [
+        {
+          OR: [
+            { nome: { contains: search } },
+            { email: { contains: search } },
+            { cpf: { contains: search } },
+          ],
+        },
+        filter
+          ? {
+              Ambulante: {
+                some: {
+                  status: statusFilter,
+                },
+              },
+            }
+          : {},
+      ],
+    };
+
+    return this.prisma.usuario.findMany({
+      where,
       include: {
         Ambulante: true,
-        Infracoes: true,
-        Localizacao: true,
-        Denuncias: true,
-        InscricoesDeEventos: true,
       },
     });
-
-    if (!user) {
-      throw new NotFoundException(
-        `Nenhum usuário encontrado com o termo de busca: ${search}`,
-      );
-    }
-
-    if (filter === 'ALL') {
-      return {
-        message: 'pesquisa realizada com sucesso',
-        sucsses: true,
-        users: user.map((user) => {
-          return {
-            ...user,
-            senha: undefined,
-          };
-        }),
-      };
-    } else if (filter === 'APROVADA') {
-      return {
-        message: 'pesquisa realizada com sucesso',
-        sucsses: true,
-        users: user.filter((user) => user.verificado === 'APROVADO'),
-      };
-    } else if (filter === 'PENDENTE') {
-      return {
-        message: 'pesquisa realizada com sucesso',
-        sucsses: true,
-        users: user.filter((user) => user.verificado === 'PENDENTE'),
-      };
-    } else if (filter === 'REJEITADA') {
-      return {
-        message: 'pesquisa realizada com sucesso',
-        sucsses: true,
-        users: user.filter((user) => user.verificado === 'REPROVADO'),
-      };
-    } else {
-      return {
-        success: false,
-        message:
-          'Filtro inválido, utilize: ALL, APROVADO, PENDENTE ou REPROVADO',
-      };
-    }
   }
-
   async deleteUser(id: string) {
     await this.userMiddleware.userExists(id);
     await this.prisma.usuario.delete({ where: { id } });

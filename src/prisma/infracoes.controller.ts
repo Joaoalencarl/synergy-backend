@@ -30,8 +30,11 @@ export class InfracoesController {
     return this.infracoesService.searchInfracoes(searchInfracoesDto);
   }
   @Patch('update')
-  async updateInfracoe(@Body() updateInfracoeDto: UpdateInfracoeDto) {
-    return this.infracoesService.updateInfracoe(updateInfracoeDto);
+  async updateInfracoe(
+    @Body() updateInfracoeDto: UpdateInfracoeDto,
+    @Query('id_infracao') id_infracao: string,
+  ) {
+    return this.infracoesService.updateInfracoe(updateInfracoeDto, id_infracao);
   }
 
   @Delete('delete/:id')

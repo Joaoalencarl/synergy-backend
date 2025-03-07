@@ -11,7 +11,6 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsCPF } from 'src/decorator/cpf.decorator';
-import { CreateLocalizationDto } from 'src/denuncia/dto/create-denuncia.dto';
 
 export class CriarUsuarioDto {
   @IsString({ message: 'O nome informado é inválido' })
@@ -71,5 +70,15 @@ export class CriarUsuarioDto {
   tipo: TipoDeUsuario;
 
   @IsOptional()
-  localizacao: CreateLocalizationDto[]; // GeoJSON Point (stringified)
+  localizacao?: {
+    latitude?: number;
+    longitude?: number;
+    logradouro?: string;
+    numero?: string;
+    complemento?: string;
+    bairro?: string;
+    cidade?: string;
+    estado?: string;
+    cep?: string;
+  };
 }

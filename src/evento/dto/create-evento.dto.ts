@@ -5,9 +5,9 @@ import {
   IsArray,
   IsInt,
   IsNotEmpty,
+  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CreateLocalizationDto } from 'src/denuncia/dto/create-denuncia.dto';
 
 export class CreateEventoDto {
   @IsString({ message: 'O nome deve ser uma string' })
@@ -25,8 +25,18 @@ export class CreateEventoDto {
   data_de_fim: Date;
 
   @IsString({ message: 'A localização deve ser uma string' })
-  @IsNotEmpty({ message: 'A localização não pode ser vazia' })
-  localizacao: CreateLocalizationDto;
+  @IsOptional()
+  localizacao?: {
+    latitude?: number;
+    longitude?: number;
+    logradouro?: string;
+    numero?: string;
+    complemento?: string;
+    bairro?: string;
+    cidade?: string;
+    estado?: string;
+    cep?: string;
+  };
 
   @IsBoolean({ message: 'O campo ativo deve ser um booleano' })
   @IsNotEmpty({ message: 'O campo ativo não pode ser vazio' })

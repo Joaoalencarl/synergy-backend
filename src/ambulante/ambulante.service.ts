@@ -13,14 +13,16 @@ export class AmbulanteService {
   ) {}
   async create(createAmbulanteDto: CreateAmbulanteDto, usuario_id: string) {
     await this.userMiddleware.userExists(usuario_id);
+    const { localizacao, ...ambulanteData } = createAmbulanteDto;
     const data: Prisma.AmbulanteCreateInput = {
-      ...createAmbulanteDto,
+      ...ambulanteData,
       status: 'PENDENTE',
       usuario: {
         connect: {
           id: usuario_id,
         },
       },
+      Localizacao: { create: localizacao },
     };
 
     const ambulante = this.prisma.ambulante.create({ data });

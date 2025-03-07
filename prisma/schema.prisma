@@ -135,8 +135,6 @@ model Infracao {
   administrador_id     String
   usuario_id           String
   descricao            String
-  bairro               String
-  ponto_de_referencia  String
   observacoes          String
   multa                Float
   prazo                DateTime

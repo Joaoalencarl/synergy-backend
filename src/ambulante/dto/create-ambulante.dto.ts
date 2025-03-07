@@ -18,8 +18,18 @@ export class CreateAmbulanteDto {
   descricao_do_negocio: string;
 
   @IsString({ message: 'A localização do negócio deve ser uma string' })
-  @IsNotEmpty({ message: 'A localização do negócio não pode ser vazia' })
-  localizacao_do__negocio: string;
+  @IsOptional()
+  localizacao?: {
+    latitude?: number;
+    longitude?: number;
+    logradouro?: string;
+    numero?: string;
+    complemento?: string;
+    bairro?: string;
+    cidade?: string;
+    estado?: string;
+    cep?: string;
+  };
 
   @IsArray({ message: 'As fotos do negócio devem ser um array de strings' })
   @IsNotEmpty({ message: 'As fotos do negócio não podem ser vazias' })

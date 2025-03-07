@@ -9,10 +9,19 @@ import { SearchInfracoesDto } from './dto/search-infracoes.dto';
 export class InfracoesService {
   constructor(private readonly prisma: PrismaService) {}
   async create(createInfracoeDto: CreateInfracoeDto, admin_id: string) {
+    const admin = await this.prisma.admin.findUnique({
+      where: { id: admin_id },
+    });
+    if (!admin) {
+      return { error: 'Admin não encontrado' };
+    }
+
+    const { localizacao, ...infracaoData } = createInfracoeDto;
     const data: Prisma.InfracaoCreateInput = {
-      ...createInfracoeDto,
+      ...infracaoData,
       admintrador: { connect: { id: admin_id } },
       usuario: { connect: { id: createInfracoeDto.usuario_id } },
+      Localizacao: { create: localizacao },
     };
 
     await this.prisma.infracao.create({ data });
@@ -49,7 +58,7 @@ export class InfracoesService {
     }
 
     if (bairro) {
-      where.bairro = { contains: bairro };
+      where.Localizacao = { some: { bairro: { contains: bairro } } };
     }
 
     if (multa !== undefined) {
@@ -83,10 +92,13 @@ export class InfracoesService {
     };
   }
 
-  async updateInfracoe(updateInfracoeDto: UpdateInfracoeDto) {
+  async updateInfracoe(
+    updateInfracoeDto: UpdateInfracoeDto,
+    infracao_id: string,
+  ) {
     const data: Prisma.InfracaoUpdateInput = {};
     const updatedInfracao = await this.prisma.infracao.update({
-      where: { id: updateInfracoeDto.id },
+      where: { id: infracao_id },
       data,
     });
 

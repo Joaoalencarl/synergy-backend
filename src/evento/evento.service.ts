@@ -9,6 +9,7 @@ import { Prisma } from '@prisma/client';
 export class EventoService {
   constructor(private readonly prisma: PrismaService) {}
   async create(createEventoDto: CreateEventoDto, adminId: string) {
+    const { localizacao, ...eventoData } = createEventoDto;
     if (!adminId) {
       return { error: 'AdminId precisa ser informado' };
     }
@@ -19,11 +20,9 @@ export class EventoService {
     }
 
     const data: Prisma.EventoCreateInput = {
-      ...createEventoDto,
+      ...eventoData,
       localizacao: {
-        create: {
-          ...createEventoDto.localizacao,
-        },
+        create: localizacao,
       },
     };
 

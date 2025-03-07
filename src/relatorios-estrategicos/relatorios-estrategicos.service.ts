@@ -88,7 +88,11 @@ export class RelatoriosEstrategicosService {
     const infracoes = await this.prisma.infracao.findMany({
       where: inicio && fim ? whereClause : {},
       select: {
-        bairro: true,
+        Localizacao: {
+          select: {
+            bairro: true,
+          },
+        },
       },
     });
 
@@ -106,19 +110,25 @@ export class RelatoriosEstrategicosService {
     const resultadosPorBairro = {};
 
     infracoes.forEach((infracao) => {
-      if (infracao.bairro) {
-        resultadosPorBairro[infracao.bairro] =
-          (resultadosPorBairro[infracao.bairro] || 0) + 1;
+      if (infracao.Localizacao && Array.isArray(infracao.Localizacao)) {
+        infracao.Localizacao.forEach((localizacao) => {
+          if (localizacao.bairro) {
+            resultadosPorBairro[localizacao.bairro] =
+              (resultadosPorBairro[localizacao.bairro] || 0) + 1;
+          }
+        });
       }
     });
 
     denuncias.forEach((denuncia) => {
-      denuncia.localizacao.forEach((localizacao) => {
-        if (localizacao.bairro) {
-          resultadosPorBairro[localizacao.bairro] =
-            (resultadosPorBairro[localizacao.bairro] || 0) + 1;
-        }
-      });
+      if (denuncia.localizacao && Array.isArray(denuncia.localizacao)) {
+        denuncia.localizacao.forEach((localizacao) => {
+          if (localizacao.bairro) {
+            resultadosPorBairro[localizacao.bairro] =
+              (resultadosPorBairro[localizacao.bairro] || 0) + 1;
+          }
+        });
+      }
     });
 
     return {

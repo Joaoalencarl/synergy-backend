@@ -1,18 +1,24 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateInfracoeDto {
   @IsNotEmpty({ message: 'O campo usuario_id é obrigatório' })
   usuario_id: string;
   @IsNotEmpty({ message: 'O campo data é obrigatório' })
   descricao: string;
-  @IsNotEmpty({ message: 'O campo data é obrigatório' })
-  latitude: number;
-  @IsNotEmpty({ message: 'O campo data é obrigatório' })
-  longitude: number;
-  @IsNotEmpty({ message: 'O campo data é obrigatório' })
-  bairro: string;
-  @IsNotEmpty({ message: 'O campo data é obrigatório' })
-  ponto_de_referencia: string;
+
+  @IsOptional()
+  localizacao?: {
+    latitude?: number;
+    longitude?: number;
+    logradouro?: string;
+    numero?: string;
+    complemento?: string;
+    bairro?: string;
+    cidade?: string;
+    estado?: string;
+    cep?: string;
+  };
+
   @IsNotEmpty({ message: 'O campo data é obrigatório' })
   tipo_da_infracao: number[];
   @IsNotEmpty({ message: 'O campo data é obrigatório' })
